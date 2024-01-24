@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "xhash": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtree": "cpp",
+        "iostream": "cpp"
+    },
+    "cmake.configureOnOpen": false,
+    "C_Cpp.errorSquiggles": "enabled"
+}
