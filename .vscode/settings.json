@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.ejs": "html",
         "unordered_map": "cpp",
         "vector": "cpp",
         "array": "cpp",
@@ -9,7 +10,8 @@
         "xmemory": "cpp",
         "xstring": "cpp",
         "xtree": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "algorithm": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.errorSquiggles": "enabled"
