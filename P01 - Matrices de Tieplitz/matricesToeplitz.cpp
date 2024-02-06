@@ -11,7 +11,7 @@
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
   Componente 1: ALEX GUILLERMO BONILLA TACO
-  Componente 2: BRYAN EDUARDO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
 */
 
 #include <iostream>
@@ -26,21 +26,28 @@ using namespace std;
 class ToeplitzMatrix{
 public:
   ToeplitzMatrix(int n,int m,int v){
+    
     assert(m>=1&&n>=1);
-    matriz.resize(n,vector<int>(m,v));
+    matriz.resize(n,vector<int>(m,v)); // Resize modifica el tamanio del vector n y de m (lo hemos dado en PCOM)
   }
   int get(int i , int j){
     return matriz[i][j];
   }
   void set(int i, int j, int v){
      matriz[i][j]=v;
-
   }
   private:
-  vector<vector<int>>matriz;
+  vector<int>diagonales;
 };
 // No te olvides de indicar y justificar el coste del constructor y el coste de cada método.
+/*El coste del constructor es de O(n^2) Siendo n el numero total de elementos de la matriz de tamanio n, m
+Siendo n en numero de filas y m en numero de columnas
+Coste get: O(1)
+Coste set: O(1)
 
+Lo hemos hecho de manera que sale mal la solucion porque nuestro setter mete el valor en el vector y debemos
+cambiar la diagonal completa, no nos da tiempo a cambiarlo
+*/
 
 bool tratar_caso() {
   // Implementa el código para tratar un caso de prueba.
@@ -60,6 +67,7 @@ bool tratar_caso() {
     }else if(cadena=="get"){
       cout<<matriz.get(f,c)<<endl;
     }
+    cin>> cadena;
   }
   cout<<"---\n";
   // En caso contrario, debe procesar el caso de prueba y devolver `true`.
