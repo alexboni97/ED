@@ -10,8 +10,8 @@
 /*
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
-  Componente 1:
-  Componente 2:
+  Componente 1: ALEX GUILLERMO BONILLA TACO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
 */
 
 #include <iostream>
