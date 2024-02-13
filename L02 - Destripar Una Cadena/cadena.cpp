@@ -235,47 +235,81 @@ void ListLinkedSingle::display(std::ostream &out) const {
 // Implementa el constructor y el método pedidos. Indica y justifica el coste
 // antes de cada implementación, mediante un comentario.
 
-
+/*
+El coste del contructor es lineal respecto al numero de elementos que tiene el string que se pasa por parametros, puesto que itera text.size() veces.
+*/
 ListLinkedSingle::ListLinkedSingle(const std::string &text) {
   this->head=nullptr;
-  for(int i=0; i<text.size();i++){
-    this->push_back(text[i]);
+  for(int  i=text.size()-1;i>=0;i--){
+    this->push_front(text[i]);
   }
 }
-
-
-
-// void ListLinkedSingle::destripar(ListLinkedSingle &dest) {
-//   Node*current=head;
-//   Node*aux=head;
-//   Node*prev=head;
-//   while(current==nullptr){
-//     if(current->value<=9)prev=current;
-//     else {
-//       prev->next
+/*
+El coste del metodo destripar() es lineal(O(n)) siendo n el numero de elemntos que contiene la lista enlazada
+*/
+void ListLinkedSingle::destripar(ListLinkedSingle &dest){
+  Node *current = head;
+  Node *cdest;
+  Node *prev = nullptr;
+  if (current->value >= 48 && current->value <= 57){
+    dest.head = current;
+    cdest = head;
+    current = current->next;
+    this->head = current;
+    while (current != nullptr && current->value >= 48 && current->value <= 57){
+      cdest->next = current;
+      cdest = current;
+      prev = current;
+      current = current->next;
+      this->head = current;
+    }
+  }
+  while (current != nullptr){
+    if (current->value < 48 || current->value > 57){
+      prev = current;
+    }
+    current = current->next;
+  }
+  if (prev != nullptr && dest.head != nullptr){
+    cdest->next = prev->next;
+  }
+  else if (prev != nullptr && dest.head == nullptr)
+    dest.head = prev->next;
+  if (this->head != nullptr)
+    prev->next = nullptr;
+}
+// El siguiente metodo comentado es similar al anterior, intentando mejorar el diseño, pero no se pudo conseguir.
+// void ListLinkedSingle::destripar(ListLinkedSingle &dest)
+// {
+//   Node *current = head;
+//   Node *cdest;
+//   Node *prev = nullptr;
+//   while (current != nullptr)
+//   {
+//     if (current->value >= 48 && current->value <= 57 && dest.head == nullptr)
+//     {
+//       dest.head = current;
+//       cdest = head;
+//       this->head = current;
 //     }
-//     current=current->next;
-//   }
-  
-// }
-void ListLinkedSingle::destripar(ListLinkedSingle &dest) {
-   Node*current=head;
-   Node*aux=dest.head;
-   Node*prev=head;
-   while(current==nullptr){
-     if(current->value<=9){
-      if(dest.empty())
-      prev=current;
-      prev->next=aux;
-      aux=aux->next;
+//     else if (current->value >= 48 && current->value <= 57 && prev->value >= 48 && prev->value <= 57)
+//     {
+//       cdest->next = current;
+//       cdest = current;
+//       prev = current;
+//       this->head = current;
+//     }
 
-     }
-     else {
-       prev->next;
-     }
-     current=current->next;
-   }
- }
+//     current = current->next;
+//   }
+//   if (prev != nullptr && dest.head != nullptr)
+//   {
+//     cdest->next = prev->next;
+//   }
+//   else if (prev != nullptr && dest.head == nullptr)
+//     dest.head = prev->next;
+//   prev->next = nullptr;
+// }
 
 using namespace std;
 
@@ -289,9 +323,10 @@ void tratar_caso() {
   ListLinkedSingle lista(texto);
   ListLinkedSingle numeros;
   lista.destripar(numeros);
+  cout<<endl;
   lista.display();
+  cout<<endl;
   numeros.display();
-  
 }
 
 //---------------------------------------------------------------
