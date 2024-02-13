@@ -237,12 +237,45 @@ void ListLinkedSingle::display(std::ostream &out) const {
 
 
 ListLinkedSingle::ListLinkedSingle(const std::string &text) {
+  this->head=nullptr;
+  for(int i=0; i<text.size();i++){
+    this->push_back(text[i]);
+  }
 }
 
 
 
+// void ListLinkedSingle::destripar(ListLinkedSingle &dest) {
+//   Node*current=head;
+//   Node*aux=head;
+//   Node*prev=head;
+//   while(current==nullptr){
+//     if(current->value<=9)prev=current;
+//     else {
+//       prev->next
+//     }
+//     current=current->next;
+//   }
+  
+// }
 void ListLinkedSingle::destripar(ListLinkedSingle &dest) {
-}
+   Node*current=head;
+   Node*aux=dest.head;
+   Node*prev=head;
+   while(current==nullptr){
+     if(current->value<=9){
+      if(dest.empty())
+      prev=current;
+      prev->next=aux;
+      aux=aux->next;
+
+     }
+     else {
+       prev->next;
+     }
+     current=current->next;
+   }
+ }
 
 using namespace std;
 
@@ -251,6 +284,14 @@ using namespace std;
 // en la entrada.
 
 void tratar_caso() {
+  string texto;
+  cin >>texto;
+  ListLinkedSingle lista(texto);
+  ListLinkedSingle numeros;
+  lista.destripar(numeros);
+  lista.display();
+  numeros.display();
+  
 }
 
 //---------------------------------------------------------------
