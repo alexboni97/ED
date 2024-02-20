@@ -225,12 +225,14 @@ std::ostream &operator<<(std::ostream &out, const ListLinkedDouble &l) {
 //---------------------------------------------------------------
 // Modificar a partir de aquí
 // --------------------------------------------------------------
-
+/*
+El coste del metodo minimun es de O(n), siendo n el numero de elementos que recorren desde el nodo begin hasta el nodo end de la lista.
+*/
 ListLinkedDouble::Node * ListLinkedDouble::minimum(Node *begin, Node *end) const {
   Node*minimo=begin;
   Node*current=begin->next;
   while (current!=end){
-    if(minimo->value>current->value){
+    if(minimo->value>=current->value){
       minimo=current;
     }
     current=current->next;
@@ -238,6 +240,9 @@ ListLinkedDouble::Node * ListLinkedDouble::minimum(Node *begin, Node *end) const
   return minimo;
 }
 
+/*
+El coste del metodo detach() es de O(1), puesto que todos sus operaciones del interior son de asignacion y comparacion de coste constante.
+*/
 void ListLinkedDouble::detach(Node *n) { // O(1)
   if (this->num_elems > 0 ) {
     n->prev->next = n->next;
@@ -245,10 +250,12 @@ void ListLinkedDouble::detach(Node *n) { // O(1)
     num_elems--;
     n->next = nullptr;
     n->prev = nullptr;
-    //delete n;
   }
 }
 
+/*
+El coste del metodo attach() es de O(1), puesto que todos sus operaciones del interior son de asignacion y comparacion de coste constante.
+*/
 void ListLinkedDouble::attach(Node *n, Node *position) { // O(1)
   n->next = position->next;
   position->next->prev = n;
@@ -257,15 +264,27 @@ void ListLinkedDouble::attach(Node *n, Node *position) { // O(1)
   this->num_elems++;
 }
 
+/*
+El coste del metodo sort_and_deup() es de O(n2), siendo n el numero de elementos que contiene la lista, y es al cuadrado porque tiene una llamada a la funcion minimun() de coste O(n)
+*/
 void ListLinkedDouble::sort_and_dedup() {
-  Node*current=head->next;
-  Node*minimo=nullptr;
-  while(current!=head->prev){
-    minimo=minimum(current,head->prev);
-    detach(minimo);
-    attach(minimo,current->prev);
-    this->display();
-    current = minimo->next;
+  Node *current = head->next;
+  Node *minimo = nullptr;
+  while (current != head)
+  {
+    minimo = minimum(current, head);
+    if (minimo != current)
+    {
+      detach(minimo);
+      attach(minimo, current->prev);
+    }
+    else
+      current = current->next;
+    if (minimo->value == minimo->prev->value)
+    {
+      detach(minimo);
+      delete minimo;
+    }
   }
 }
 
@@ -276,7 +295,7 @@ using namespace std;
 // en la entrada.
 
 void tratar_caso() {
-  ListLinkedDouble lista; // O(n)
+  ListLinkedDouble lista; // O(1)
   int n;
   cin>>n;
   
@@ -285,7 +304,7 @@ void tratar_caso() {
     cin>>n;
   }
   
-  lista.sort_and_dedup();
+  lista.sort_and_dedup();//O(n2)
   lista.display(); // O(n)
   cout<<endl;
 }
