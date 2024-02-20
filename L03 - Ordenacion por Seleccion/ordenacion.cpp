@@ -285,6 +285,8 @@ void ListLinkedDouble::sort_and_dedup() {
       detach(minimo);
       delete minimo;
     }
+    // this->display();
+    // cout<<endl;
   }
 }
 
@@ -305,7 +307,7 @@ void tratar_caso() {
   }
   
   lista.sort_and_dedup();//O(n2)
-  lista.display(); // O(n)
+  cout<<lista; // O(n)
   cout<<endl;
 }
 
