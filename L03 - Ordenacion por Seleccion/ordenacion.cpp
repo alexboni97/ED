@@ -280,7 +280,7 @@ void ListLinkedDouble::sort_and_dedup() {
     }
     else
       current = current->next;
-    if (minimo->value == minimo->prev->value)
+    if (minimo->value == minimo->prev->value&&minimo->prev!=head)
     {
       detach(minimo);
       delete minimo;
