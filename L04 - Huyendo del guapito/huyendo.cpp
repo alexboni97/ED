@@ -22,8 +22,8 @@
 /*  
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
-  Componente 1:
-  Componente 2:
+  Componente 1: ALEX GUILLERMO BONILLA TACO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
 */
 //@ </answer>
 
@@ -54,11 +54,9 @@
 #include <cassert>
 #include <string> 
 #include <utility>
-
+#include <deque>
 
 using namespace std;
-
-
 
 //@ <answer>
 // ----------------------------------------------
@@ -69,7 +67,45 @@ using namespace std;
 // Añade los tipos de datos auxiliares y funciones que necesites
 
 
-
+int solucion(deque<char>p, deque<pair<char,int>>a, int &hdisp) {
+  while (hdisp != 0 && !a.empty()) {
+    if (p.front() == 'G') { // Supende siempre
+      a.front().second++; // Se presenta otra vez
+      a.push_back(a.front());
+      a.pop_front();  
+    }
+    else if (p.front() == 'A') { // Suspende dependiendo B/M
+      if (a.front().first == 'B') { // Aprueba
+        a.pop_front();
+      }
+      else {
+        a.front().second++; // Se presenta otra vez
+        a.push_back(a.front());
+        a.pop_front();
+      }
+    }
+    else if (p.front() == 'B') { // Suspende dependiendo B/M y 3 veces apruebas siempre   
+      if (a.front().first == 'B') { // Aprueba
+        a.pop_front();
+      }
+      else {
+        if(a.front().second >= 2){ // Aprueba a la 3º
+          a.pop_front();
+        }
+        else {
+        a.front().second++; // Se presenta otra vez
+        a.push_back(a.front());
+        a.pop_front();
+        }
+      }
+    }
+    p.push_back(p.front());
+    p.pop_front();
+    hdisp--;
+  }
+  
+  return a.size();
+}
 
 
 // Implementa aquí la función para tratar UN caso de prueba. La función
@@ -80,14 +116,38 @@ using namespace std;
 // No olvides indicar y justificar el coste de la función.
 
 bool tratar_caso() {
-  //...
+  int N,M,T;
+  deque<char> p;
+  deque<pair<char, int>> a;
+  p.clear();
+  a.clear();
+  cin >> N >> M >> T;
+  
+  if(!cin)
+    return false;
+  
+  char c;
+  int hdisp=N*T;
+  for(int i=0;i<N;i++){
+    cin>>c;
+    p.push_back(c);
+  }
+  
+  char alumno;
+  for(int i=0; i < M; i++){
+    cin>>alumno;
+    a.push_back({alumno,0});
+  }
+
+  cout<< solucion(p, a, hdisp)<<endl;
+
+  return true;
 }
 
 // ----------------------------------------------
 // No modificar a partir de la línea
 // ----------------------------------------------
 //@ </answer>
-
 
 int main() {
   // Si estás ejecutando el programa en tu ordenador, las siguientes líneas
