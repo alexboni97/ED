@@ -66,9 +66,10 @@ using namespace std;
 
 // A�ade los tipos de datos auxiliares y funciones que necesites
 
-/*El coste 'solucion' */
+/*El coste solucion() es de O(N*T), siendo N*T el numero de alumnos y T el numero de horas disponibles
+El coste de todas las operaciones del interior del while son de coste constante. */
 int solucion(queue<char>p, queue<pair<char, int>>a, int& hdisp) {
-    while (hdisp != 0 && !a.empty()) {
+    while (hdisp != 0 && !a.empty()) { 
         if (p.front() == 'G') { // Supende siempre
             a.front().second++; // Se presenta otra vez
             a.push(a.front());
@@ -117,8 +118,8 @@ int solucion(queue<char>p, queue<pair<char, int>>a, int& hdisp) {
 
 bool tratar_caso() {
     int N, M, T;
-    queue<char> p;
-    queue<pair<char, int>> a;
+    queue<char> p; // Cola para profesores, O(1)
+    queue<pair<char, int>> a; // Cola para alumnos, O(1)
     //p.clear();
     //a.clear();
     cin >> N >> M >> T;
@@ -130,13 +131,13 @@ bool tratar_caso() {
     int hdisp = N * T;
     for (int i = 0; i < N; i++) {
         cin >> c;
-        p.push(c);
+        p.push(c); // O(1)
     }
 
     char alumno;
     for (int i = 0; i < M; i++) {
         cin >> alumno;
-        a.push({ alumno,0 });
+        a.push({ alumno,0 }); // O(1)
     }
 
     cout << solucion(p, a, hdisp) << endl;
