@@ -66,8 +66,9 @@ using namespace std;
 
 // A�ade los tipos de datos auxiliares y funciones que necesites
 
-/*El coste solucion() es de O(N*T), siendo N*T el numero de alumnos y T el numero de horas disponibles
-El coste de todas las operaciones del interior del while son de coste constante. */
+/*El coste solucion() es de O(N*T) en el caso peor, siendo N el numero de horas disponibles en un dia  y T el numero de dias en los cuales
+se realizan pruebas
+El coste de todas las operaciones del interior del while son de coste constante O(1). */
 int solucion(queue<char>p, queue<pair<char, int>>a, int& hdisp) {
     while (hdisp != 0 && !a.empty()) { 
         if (p.front() == 'G') { // Supende siempre
