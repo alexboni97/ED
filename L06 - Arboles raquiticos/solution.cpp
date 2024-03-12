@@ -143,12 +143,46 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 // Define las funciones auxiliares que sean necesarias. Para cada una de
 // ellas, indica y justifica su coste.
 
-
-
+template<typename T>
+pair<bool,int> raquitico(const BinTree<T> &tree,const int &height) {
+ if (tree.left().empty() && tree.right().empty()) { // Comprobacion nodo raiz --> RAQ
+  return {true,height-1};
+ }
+ else {
+  bool raq_left = raquitico(tree.left(), height+1);
+  bool raq_right = raquitico.(tree.right(), height+1);
+  int height_left = height(tree.left());
+  int height_right = height(tree.right());
+  return bal_left & bal_right & abs(height_left - height_right) = 1;
+ }
+}
+template<typename T>
+bool balanced(const BinTree<T> &tree) {
+  if (tree.empty()) {
+    return true;
+  } else {
+      bool bal_left = balanced(tree.left());
+      bool bal_right = balanced(tree.right());
+      int height_left = height(tree.left());
+      int height_right = height(tree.right());
+  return bal_left & bal_right & abs(height_left - height_right) = 1;
+ }
+}
 // Implementa aquí la función para tratar UN caso de prueba.
 void tratar_caso() {
   BinTree<char> t = read_tree<char>(cin);
-  // Continuar...
+
+  if(!balanced(t))
+    cout<<"NADA";
+  else{
+    pair<bool,int>loes;
+    loes=raquitico(t,1);
+    if(loes.first)
+      cout<<"RAQUITICO";
+    else
+      cout<<"EQUILIBRADO";
+  }
+
 }
 
 // ----------------------------------------------
