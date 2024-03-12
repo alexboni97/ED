@@ -22,8 +22,8 @@
 /*  
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
-  Componente 1:
-  Componente 2:
+  Componente 1: ALEX GUILLERMO BONILLA TACO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
 */
 //@ </answer>
 
@@ -142,47 +142,80 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 
 // Define las funciones auxiliares que sean necesarias. Para cada una de
 // ellas, indica y justifica su coste.
+// template <typename T>
+// int height(const BinTree<T> &tree){
+//   if (tree.empty())  {
+//     return 0;
+//   }else{
+//     return 1 + max(height(tree.left()), height(tree.right()));
+//   }
+// }
 
-template<typename T>
-pair<bool,int> raquitico(const BinTree<T> &tree,const int &height) {
- if (tree.left().empty() && tree.right().empty()) { // Comprobacion nodo raiz --> RAQ
-  return {true,height-1};
- }
- else {
-  bool raq_left = raquitico(tree.left(), height+1);
-  bool raq_right = raquitico.(tree.right(), height+1);
-  int height_left = height(tree.left());
-  int height_right = height(tree.right());
-  return bal_left & bal_right & abs(height_left - height_right) = 1;
- }
-}
-template<typename T>
-bool balanced(const BinTree<T> &tree) {
-  if (tree.empty()) {
-    return true;
-  } else {
-      bool bal_left = balanced(tree.left());
-      bool bal_right = balanced(tree.right());
-      int height_left = height(tree.left());
-      int height_right = height(tree.right());
-  return bal_left & bal_right & abs(height_left - height_right) = 1;
- }
+// template <typename T>
+// pair<bool, int> raquitico(const BinTree<T> &tree, const int & heightB){
+//   if (tree.left().empty() && tree.right().empty())  // Comprobacion nodo raiz --> RAQ
+//     return {true, 0};
+//   else{
+//     bool raq_left = raquitico(tree.left(), heightB);
+//     bool raq_right = raquitico.(tree.right(), heightB);
+//     int height_left = height(tree.left());
+//     int height_right = height(tree.right());
+//     return raq_left & raq_right & abs(height_left - height_right) = 1 & abs(height_left - height_right);
+//   }
+// }
+
+// template <typename T>
+// pair<bool, int> balanced_height(const BinTree<T> &tree){
+//   if (tree.empty()){
+//     return {true, 0};
+//   }else{
+//     auto [bal_left, height_left] = balanced_height(tree.left());
+//     auto [bal_right, height_right] = balanced_height(tree.right());
+//     bool balanced = bal_left && bal_right && abs(height_left - height_right) <= 1;
+//     int height = 1 + max(height_left, height_right);
+//     return {balanced, height};
+//   }
+// }
+template <typename T>
+tuple<bool, bool,int,int> raquitico_height_repeatheight(const BinTree<T> &tree){
+  //if (tree.left().empty() && tree.right().empty()){
+  if (tree.empty()){
+    return {true, true, 0, 1};
+  }else{
+    int repeat_max_height=0;
+    auto [bal_left, raq_left, height_left, repeat_max_height_left] = raquitico_height_repeatheight(tree.left());
+    auto [bal_right, raq_right, height_right, repeat_max_height_right] = raquitico_height_repeatheight(tree.right());
+    bool balanced = bal_left && bal_right && abs(height_left - height_right) <= 1;
+    bool raquitico = raq_left && raq_right && abs(max(height_left, height_right) - min(height_left, height_right) - 1) <= 1;
+    int height;
+    if(height_left == height_right&&!tree.left().empty()&&!tree.right().empty())
+      repeat_max_height = repeat_max_height_left+repeat_max_height_right;
+    else{
+      if(height_left>height_right)
+        repeat_max_height=repeat_max_height_left;
+      else
+        repeat_max_height=repeat_max_height_right;
+    }
+    height = max(height_left, height_right);
+    height += 1 ;
+    return {balanced, raquitico, height,repeat_max_height};
+  }
 }
 // Implementa aquí la función para tratar UN caso de prueba.
-void tratar_caso() {
+void tratar_caso(){
   BinTree<char> t = read_tree<char>(cin);
-
-  if(!balanced(t))
-    cout<<"NADA";
+  pair<bool, int> pairR;
+  pair<bool, int> pairB;
+  auto[balanced,raquitico,height,repeat_height]=raquitico_height_repeatheight(t);
+  if (!balanced)
+    cout << "NADA\n";
   else{
-    pair<bool,int>loes;
-    loes=raquitico(t,1);
-    if(loes.first)
-      cout<<"RAQUITICO";
+    if (raquitico&&repeat_height<=1&&height>=1)
+      cout << "RAQUITICO\n";
     else
-      cout<<"EQUILIBRADO";
+      cout << "EQUILIBRADO\n";
   }
-
+ // cout<<height<<" "<<repeat_height<<endl;
 }
 
 // ----------------------------------------------
@@ -210,6 +243,7 @@ int main() {
 
   // Llamamos a `tratar_caso` tantas veces como el número anterior.
   for (int i = 0; i < num_casos; i++) {
+    //cout<<"---"<<i+2<<"----\n";
     tratar_caso();
   }
 
