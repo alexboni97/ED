@@ -143,9 +143,10 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 // Define las funciones auxiliares que sean necesarias. Para cada una de
 // ellas, indica y justifica su coste.
 
-// La funcion en el caso peor, que es cuando tiene que recorrer todos los nodos del arbol
-// seria de O(n) siendo n el numero de nodos del arbol binario pasado como parametro de entrada
-// para cada nivel del arbol se realizan operaciones de coste cte O(1) 
+// La funcion en el caso peor, cuando el arbol no es vacio y no sea equilibrado, por ejemplo
+// podria tener que recorrer todos los nodos de forma secuencial si cada nodo del arbol solo tiene un hijo 
+// El coste sería O(n) siendo n el numero de nodos del arbol binario pasado como parametro de entrada.
+// Las demas operaciones que se hacen en cada nodo del arbol son de coste cte O(1) 
 template <typename T>
 tuple<bool, bool,int> raquitico_height_repeatheight(const BinTree<T> &tree){
   if (tree.empty()){
@@ -175,7 +176,6 @@ void tratar_caso(){
     else
       cout << "EQUILIBRADO\n";
   }
- // cout<<height<<" "<<repeat_height<<endl;
 }
 
 // ----------------------------------------------
@@ -203,7 +203,6 @@ int main() {
 
   // Llamamos a `tratar_caso` tantas veces como el número anterior.
   for (int i = 0; i < num_casos; i++) {
-    //cout<<"---"<<i+2<<"----\n";
     tratar_caso();
   }
 
