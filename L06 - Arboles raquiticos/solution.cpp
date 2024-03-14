@@ -144,7 +144,7 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 // ellas, indica y justifica su coste.
 
 // La funcion en el caso peor, que es cuando tiene que recorrer todos los nodos del arbol
-// seria de O(h) siendo h la altura del arbol binario pasado como parametro
+// seria de O(n) siendo n el numero de nodos del arbol binario pasado como parametro de entrada
 // para cada nivel del arbol se realizan operaciones de coste cte O(1) 
 template <typename T>
 tuple<bool, bool,int> raquitico_height_repeatheight(const BinTree<T> &tree){
