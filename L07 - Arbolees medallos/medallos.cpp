@@ -24,17 +24,18 @@
   ---------------------------------------------------------
   Componente 1: ALEX GUILLERMO BONILLA TACO
   Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
-*/
+*/  
 //@ </answer>
 
 
-
+// Añade los #include que necesites
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <memory>
 #include <utility>  // Para la clase pair
 #include <tuple>    // Para la clase tuple
+#include <queue>
 
 using namespace std;
 
@@ -140,74 +141,57 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 // Modificar a partir de aquí
 // ----------------------------------------------
 
-// Define las funciones auxiliares que sean necesarias. Para cada una de
-// ellas, indica y justifica su coste.
+// Implementa la función pedida a continuación e indica y justifica su coste.
 
-// La funcion en el caso peor, cuando el arbol no es vacio y no sea equilibrado, por ejemplo
-// podria tener que recorrer todos los nodos de forma secuencial si cada nodo del arbol solo tiene un hijo 
-// El coste sería O(n) siendo n el numero de nodos del arbol binario pasado como parametro de entrada.
-// Las demas operaciones que se hacen en cada nodo del arbol son de coste cte O(1) 
+// Puedes definir las funciones auxiliares que sean necesarias. Para cada una
+// de ellas, indica y justifica su coste.
+
+
 template <typename T>
-tuple<bool, bool,int> raquitico_height_repeatheight(const BinTree<T> &tree){
-  if (tree.empty()){
-    return {true, true, 0};
-  }else{
-    int repeat_max_height=0;
-    auto [bal_left, raq_left, height_left] = raquitico_height_repeatheight(tree.left());
-    auto [bal_right, raq_right, height_right] = raquitico_height_repeatheight(tree.right());
-    bool balanced = bal_left && bal_right && abs(height_left - height_right) <= 1;
-    bool raquitico = raq_left && raq_right;
-    int height = 1+ max(height_left, height_right);
-    if(height>1)raquitico=raquitico&& abs(height_left - height_right) == 1;
-    return {balanced, raquitico, height};
-  }
-}
-template <typename T>
-pair<bool, int> botinyvida(const BinTree<T> &tree){
-  if (tree.empty()){
-    return {0, 0};
-  }else{
-    int botin=0;
-    int vidamin=0;
-    pair <bool,int>iz;
-    pair <bool,int>der;
-    pair <bool,int>valores;
-    iz = botinyvida(tree.left());
-    der = botinyvida(tree.right());
-    int val=tree.root->elem;
-    if(iz.first>der.first){
-      
+int num_mellas(const BinTree<T> &t) {
+  int mellas=0;
+  bool hayHijo=false;
+  bool sinhijos=false;
+  queue<BinTree<T>> pending;
+  pending.push(t);
+
+  while (!pending.empty()) {
+    BinTree<T> current = pending.front();
+    pending.pop();
+    if (!current.left().empty() && !current.right().empty()) { // Hay hijo izq y der
+      pending.push(current.left());
+      pending.push(current.right());
     }
-    if(val>0){
-
-    }else if(val==0){
-
-    }else if(val<0){
-
+    else {
+      sinhijos=true;
+      if (current.left().empty() && current.right().empty() && !hayHijo) { // no Hay hijo izq ni der
+        mellas++;
+        hayHijo=true;
+      }
+      else if (!current.left().empty() && current.right().empty()) { // Hay hijo izq pero no der
+          mellas++;
+          hayHijo=true;
+      }
+      else { // NO Hay hijo izq pero SI der
+        if(!hayHijo)
+          mellas++;
+        }
     }
-    return ;
   }
-}
-// Implementa aquí la función para tratar UN caso de prueba.
-void tratar_caso(){
-  BinTree<char> t = read_tree<char>(cin);
-  pair<bool, int> pairR;
-  pair<bool, int> pairB;
-  auto[balanced,raquitico,height]=raquitico_height_repeatheight(t);
-  if (!balanced)
-    cout << "NADA\n";
-  else{
-    if (raquitico)
-      cout << "RAQUITICO\n";
-    else
-      cout << "EQUILIBRADO\n";
-  }
+  if(!sinhijos)mellas =0;
+  return mellas;
 }
 
 // ----------------------------------------------
 // No modificar a partir de la línea
 // ----------------------------------------------
 //@ </answer>
+
+// Función para tratar UN caso de prueba.
+void tratar_caso() {
+  BinTree<char> t = read_tree<char>(cin);
+  cout << num_mellas(t) << "\n";
+}
 
 
 int main() {

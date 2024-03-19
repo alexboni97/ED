@@ -21,7 +21,16 @@
         "random": "cpp",
         "xutility": "cpp",
         "cstdlib": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "memory": "cpp",
+        "queue": "cpp",
+        "xiosbase": "cpp",
+        "forward_list": "cpp",
+        "ranges": "cpp",
+        "regex": "cpp",
+        "span": "cpp",
+        "stack": "cpp",
+        "xlocinfo": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.errorSquiggles": "enabled",
