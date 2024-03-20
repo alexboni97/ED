@@ -146,7 +146,13 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 
 // Puedes definir las funciones auxiliares que sean necesarias. Para cada una
 // de ellas, indica y justifica su coste.
-
+/*
+El coste de la funcion num_mellas() es lineal O(n), en el peor de los casos, cuando nos encontramos con un arbol completo sin mellas, siendo n el numero de nodos del arbol, recorridos con bfs.
+El bucle que se encuentra dentro del recorrido no modifica el coste solamente sirve de apoyo para que el recorrido de la cola podamos ir diferenciando en que nivel del arbol nos encontramos en cada momento.
+El bucle del final solo se encarga de vaciar la cola que contiene los nodos en los que no se va a iterar y hacer operaciones, 
+entra dentro del coste del primer bucle while(!pending.empty) que es el que marca el coste de la funcion num_mellas()
+El resto de operaciones es de tiempo constante 
+*/
 
 template <typename T>
 int num_mellas(const BinTree<T> &t) {
@@ -154,7 +160,8 @@ int num_mellas(const BinTree<T> &t) {
   int n=0;
   int i=0;
   bool huboMella=false;
-  bool completo=true;
+  bool huboMellacompleto=false;
+  bool esArbolCompeto=true;
   queue<BinTree<T>> pending;
   pending.push(t);
 
@@ -171,84 +178,44 @@ int num_mellas(const BinTree<T> &t) {
 
         if (!current.left().empty() && !current.right().empty())
         { // Hay hijo izq y der
-          if(huboMella){
-            mellas++;
+            if(huboMellacompleto){
+              mellas++;
+              huboMellacompleto=false;
+            }
             huboMella=false;
-          }
           pending.push(current.left());
           pending.push(current.right());
         }
         else if(current.left().empty() && current.right().empty()){
-          if(!huboMella){
-            huboMella=true;
-          }
+          if(!huboMella)huboMellacompleto=true;
         }
         else if(!current.left().empty() && current.right().empty()){
-          if(!huboMella)
-            mellas++;
+          if(huboMellacompleto){
+            mellas++;huboMellacompleto=false;
+          }
+          mellas++;
           huboMella=true;
+          esArbolCompeto=false;
         }
         else if(current.left().empty() && !current.right().empty()){
-          if(!huboMella)
+          if(!huboMella||huboMellacompleto)
             mellas++;
           huboMella=false;
+          huboMellacompleto=false;
+          esArbolCompeto=false;
         }
    
         numNodos--;
       }
+    }else{
+    esArbolCompeto=false;
+    while(!pending.empty()) pending.pop();
     }
-    else pending.pop();
   }
-  //if(completo)mellas=0;
+  if(huboMellacompleto&&!esArbolCompeto)mellas++;
   return mellas;
 }
 
-// template <typename T>
-// int num_mellas(const BinTree<T> &t) {
-//   int mellas=0;
-//   bool huboMella=false;
-//   bool completo=true;
-//  // bool esCompleto=true;
-//   queue<BinTree<T>> pending;
-//   pending.push(t);
-  
-//   while (!pending.empty()) {
-//     BinTree<T> current = pending.front();
-//     pending.pop();
-//     if (!current.left().empty() && !current.right().empty()&&completo) { // Hay hijo izq y der
-//       pending.push(current.left());
-//       pending.push(current.right());
-//     }
-//     else {
-//      // esCompleto=false;
-//        if (!current.left().empty() && !current.right().empty()) { // Hay hijo izq y der pero ya no es completo
-//         huboMella=false;
-//       }
-//       else if (current.left().empty() && current.right().empty() && !huboMella) { // no Hay hijo izq ni der
-//         if(!completo){
-//           mellas++;
-//         }
-//           huboMella=true;
-//       }
-//       else if (!current.left().empty() && current.right().empty()) { // Hay hijo izq pero no der
-//           if(completo&&huboMella)mellas++;
-//           mellas++;
-//           huboMella=true;
-//           completo=false;
-//       }
-//       else if(current.left().empty()  && !current.right().empty()) { // NO Hay hijo izq pero SI der
-//         if(completo&&huboMella)mellas++;
-//         else if(!huboMella)
-//           mellas++;
-//         huboMella=false;
-//         completo=false;
-//       }
-//     }
-
-//   }
-//   //if(completo)mellas=0;
-//   return mellas;
-// }
 // ----------------------------------------------
 // No modificar a partir de la línea
 // ----------------------------------------------
