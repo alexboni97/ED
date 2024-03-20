@@ -36,6 +36,7 @@
 #include <utility>  // Para la clase pair
 #include <tuple>    // Para la clase tuple
 #include <queue>
+#include <cmath>
 
 using namespace std;
 
@@ -150,38 +151,104 @@ template <typename T> BinTree<T> read_tree(std::istream &in) {
 template <typename T>
 int num_mellas(const BinTree<T> &t) {
   int mellas=0;
-  bool hayHijo=false;
-  bool sinhijos=false;
+  int n=0;
+  int i=0;
+  bool huboMella=false;
+  bool completo=true;
   queue<BinTree<T>> pending;
   pending.push(t);
 
-  while (!pending.empty()) {
-    BinTree<T> current = pending.front();
-    pending.pop();
-    if (!current.left().empty() && !current.right().empty()) { // Hay hijo izq y der
-      pending.push(current.left());
-      pending.push(current.right());
-    }
-    else {
-      sinhijos=true;
-      if (current.left().empty() && current.right().empty() && !hayHijo) { // no Hay hijo izq ni der
-        mellas++;
-        hayHijo=true;
-      }
-      else if (!current.left().empty() && current.right().empty()) { // Hay hijo izq pero no der
-          mellas++;
-          hayHijo=true;
-      }
-      else { // NO Hay hijo izq pero SI der
-        if(!hayHijo)
-          mellas++;
+  while (!pending.empty())
+  {
+    int numNodos = pending.size();
+    if (numNodos == pow(2, i))
+    {
+      i++;
+      while (numNodos > 0)
+      {
+        BinTree<T> current = pending.front();
+        pending.pop();
+
+        if (!current.left().empty() && !current.right().empty())
+        { // Hay hijo izq y der
+          if(huboMella){
+            mellas++;
+            huboMella=false;
+          }
+          pending.push(current.left());
+          pending.push(current.right());
         }
+        else if(current.left().empty() && current.right().empty()){
+          if(!huboMella){
+            huboMella=true;
+          }
+        }
+        else if(!current.left().empty() && current.right().empty()){
+          if(!huboMella)
+            mellas++;
+          huboMella=true;
+        }
+        else if(current.left().empty() && !current.right().empty()){
+          if(!huboMella)
+            mellas++;
+          huboMella=false;
+        }
+   
+        numNodos--;
+      }
     }
+    else pending.pop();
   }
-  if(!sinhijos)mellas =0;
+  //if(completo)mellas=0;
   return mellas;
 }
 
+// template <typename T>
+// int num_mellas(const BinTree<T> &t) {
+//   int mellas=0;
+//   bool huboMella=false;
+//   bool completo=true;
+//  // bool esCompleto=true;
+//   queue<BinTree<T>> pending;
+//   pending.push(t);
+  
+//   while (!pending.empty()) {
+//     BinTree<T> current = pending.front();
+//     pending.pop();
+//     if (!current.left().empty() && !current.right().empty()&&completo) { // Hay hijo izq y der
+//       pending.push(current.left());
+//       pending.push(current.right());
+//     }
+//     else {
+//      // esCompleto=false;
+//        if (!current.left().empty() && !current.right().empty()) { // Hay hijo izq y der pero ya no es completo
+//         huboMella=false;
+//       }
+//       else if (current.left().empty() && current.right().empty() && !huboMella) { // no Hay hijo izq ni der
+//         if(!completo){
+//           mellas++;
+//         }
+//           huboMella=true;
+//       }
+//       else if (!current.left().empty() && current.right().empty()) { // Hay hijo izq pero no der
+//           if(completo&&huboMella)mellas++;
+//           mellas++;
+//           huboMella=true;
+//           completo=false;
+//       }
+//       else if(current.left().empty()  && !current.right().empty()) { // NO Hay hijo izq pero SI der
+//         if(completo&&huboMella)mellas++;
+//         else if(!huboMella)
+//           mellas++;
+//         huboMella=false;
+//         completo=false;
+//       }
+//     }
+
+//   }
+//   //if(completo)mellas=0;
+//   return mellas;
+// }
 // ----------------------------------------------
 // No modificar a partir de la línea
 // ----------------------------------------------

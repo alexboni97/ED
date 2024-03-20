@@ -30,7 +30,8 @@
         "regex": "cpp",
         "span": "cpp",
         "stack": "cpp",
-        "xlocinfo": "cpp"
+        "xlocinfo": "cpp",
+        "cmath": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.errorSquiggles": "enabled",
