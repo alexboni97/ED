@@ -22,8 +22,8 @@
 /*  
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
-  Componente 1:
-  Componente 2:
+  Componente 1: ALEX GUILLERMO BONILL TACO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRRA
 */
 //@ </answer>
 
@@ -95,8 +95,8 @@ public:
   // ¡No olvides el coste! Para ello puedes suponer que el árbol binario de
   //  búsqueda está equilibrado
   pair<T, bool> find_le(const T &elem) {
-    Node *aux= this->search(this->root_node,);
-    
+    auto p=search_le(this->root_node,elem);
+    return p;
   }
 //@ </answer>
 
@@ -224,19 +224,21 @@ private:
   // ¡No olvides el coste! Para ello puedes suponer que el árbol binario de
   //  búsqueda está equilibrado
 
-
-  pair<int, bool> searchNode(const Node *root, const T &elem,int ) {
-    if (root == nullptr) {
+  static std::pair<T, bool> search_le(Node *root, const T &elem)  {
+    if (root == nullptr){
       return {0, false};
-    } else if (elem == root->elem) {
+    }else if (root->elem < elem){
+      auto [value, encontrado] = search_le(root->right, elem);
+      if (!encontrado)
+        return {root->elem, true};
+      else
+        return {value, encontrado};
+    }else if (root->elem > elem){
+      auto [value, encontrado] = search_le(root->left, elem);
+      return {value, encontrado};
+    }else
       return {elem, true};
-    } else if (elem < root->elem) {
-      return search(root->left, elem);
-    } else {
-      return search(root->right, elem);
-    }
   }
-
 
 //@ </answer>
 };
@@ -257,49 +259,50 @@ std::ostream &operator<<(std::ostream &out, const SetTree<T> &set) {
 // Función para tratar UN caso de prueba. Devuelve true si se ha tratado un
 // caso de prueba o false si no lo ha hecho porque se ha encontrado con la
 // marca de fin de entrada (0 0)
-bool tratar_caso() {
-  // Implementar
-  int N,M;
-  cin>>N>>M;
+bool tratar_caso(){
+  int N, M;
+  cin >> N >> M;
 
-  if(N==0 && M==0) {
+  if (N == 0 && M == 0)  {
     return false;
   }
   // Indica el coste de tratar un caso de prueba. Para ello puedes suponer que
   // los conjuntos que utilices están representados mediante árboles de
   // búsqueda equilibrados.
-  SetTree <int>t;
+  SetTree<int> t;
   stack<int> pila;
   int elem;
 
-  for(int i=0;i<N;i++) {
-    cin>>elem;
+  for (int i = 0; i < N; i++){
+    cin >> elem;
     t.insert(elem);
   }
 
-  for(int i=0;i<M;i++) {
-    cin>>elem;
+  for (int i = 0; i < M; i++){
+    cin >> elem;
     pila.push(elem);
   }
-  pair<int,bool>sol;
-  while (!pila.empty()) {
+  pair<int, bool> sol;
+  sol.first = 0;
+  sol.second = true;
+  while (!pila.empty()){
     auto solElem = t.find_le(pila.top());
-    pila.pop();
-    if(solElem.second==false){
-      sol.second=false;
+    if (solElem.second == false){
+      sol.second = false;
       break;
-    }else
-    sol.first+=solElem.first;
+    }
+    else
+      sol.first = sol.first - solElem.first + pila.top() + 1;
+    pila.pop();
   }
 
-  if (sol.second == false) cout<<"NO SE PUEDE"<<endl;
-  else cout<<sol.first<<endl;
-  
+  if (sol.second == false)
+    cout << "NO SE PUEDE" << endl;
+  else
+    cout << sol.first << endl;
+
   return true;
 }
-
-
-
 
 // ----------------------------------------------
 // No modificar a partir de la línea
