@@ -223,7 +223,8 @@ private:
 
   // ¡No olvides el coste! Para ello puedes suponer que el árbol binario de
   //  búsqueda está equilibrado
-
+  // Suponiendo que el arbol es un ABB equilibrado el coste en el caso peor es O(log n)
+  // siendo n el num de nodos del arbol al que hace referencia la raiz root pasada por parametro 
   static std::pair<T, bool> search_le(Node *root, const T &elem)  {
     if (root == nullptr){
       return {0, false};
