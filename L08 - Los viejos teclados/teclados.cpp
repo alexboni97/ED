@@ -270,6 +270,13 @@ bool tratar_caso(){
   // Indica el coste de tratar un caso de prueba. Para ello puedes suponer que
   // los conjuntos que utilices están representados mediante árboles de
   // búsqueda equilibrados.
+  /*
+  El coste para un caso de prueba es de O(m) siendo m el numero de elementos  que se encuentran en la pila, pero hay que tener en cuenta la funcion find le,
+  puesto que cada llamada a esta funcion, al tratar arboles de busqueda equilibrados, el coste es de O(log n) siendo n, el numero de nodos
+  que tiene el arbol settree t.
+  Por lo tanto, el coste final de tratar un caso es de coste O(m log n) siendo m, el numero de elemntos que contiene la pila y n, el numero de nodos 
+  que tiene el arbol que hemos construido.
+  */
   SetTree<int> t;
   stack<int> pila;
   int elem;
