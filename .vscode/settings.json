@@ -31,7 +31,8 @@
         "span": "cpp",
         "stack": "cpp",
         "xlocinfo": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "map": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.errorSquiggles": "enabled",
