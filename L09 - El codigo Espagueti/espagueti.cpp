@@ -11,7 +11,7 @@
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
   Componente 1: BRYAN EDUARDO CORDOVA ASCURRA
-  Componente 2: ALEX BONILLA TACO
+  Componente 2: ALEX GUILLERMO BONILLA TACO
 */
 
 
@@ -20,6 +20,8 @@
 #include <fstream>
 #include <cassert>
 #include <map>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -39,7 +41,7 @@ using namespace std;
 //   int numI;
 // }pr;
 // using programa = ...
-using programa=map<int,pair<string,int>>;
+using programa=map<int,pair<string,string>>;
 // Define un tipo para almacenar el valor de cada variable del programa
 // using memoria = ...
 using memoria=map<string,int>;
@@ -65,32 +67,72 @@ using memoria=map<string,int>;
 // Indica el coste, en el caso peor, de la función `ejecutar`, en función del tamaño
 // del programa `p` y de `num_pasos`
 pair<memoria, bool> ejecutar(const programa &p, int max_pasos) {
+  memoria m;
+  bool running=true;
+  auto it=p.begin();
+  int ni=0;
   
-  
+  while (ni < max_pasos && it!=p.end()&& running){
+    pair<string,string>pvalue=it->second;
+    if(pvalue.first=="INCR"){
+      auto itm=m.find(pvalue.second);
+      if(itm!=m.end()){
+        m.insert_or_assign(itm->first,itm->second++);
+      }else{
+        m.insert_or_assign(pvalue.second,0);
+      }
+      it++;
+    }else {
+      it=p.find(stoi(pvalue.second));
+      if(it==p.end())running=false;
+    }
+    ni++;
+  }
+  return {m,running};
 }
 
+void mostrarMemoria(const memoria &m){
+  for(auto it =m.begin();it!=m.end();it++){
+    cout<<it->first<<" = "<<it->second<<endl;
+  }
+}
 
 // Introduce el código para tratar un caso de prueba. Devuelve true
 // si se ha encontrado un caso de prueba en la entrada, o false si,
 // en su lugar, se ha encontrado la marca de fin de fichero (EOF).
 bool tratar_caso() {
   programa p;
-  p[0];
-  int key;
+  string linea,sfirst;
 
-  cin>>key;
-
-  if (!cin){
+  getline(std::cin,linea);
+  if (linea==""){
     return false;
   }
-  
-  string valor;
-  cin>>valor;
-  while (valor != "BYE") {
-      
-      cin>>valor;
+  stringstream ss(linea);
+  ss>>sfirst;
+  while(sfirst!="BYE"){
+    if(sfirst=="RUN"){
+      int np;
+      ss>>np;
+      pair<memoria,bool>solRun=ejecutar(p,np);
+      if(solRun.second){
+        mostrarMemoria(solRun.first);
+        cout<<"OK\n";
+      }else
+      cout<<"ERROR\n";
+    }else{
+      int ni=stoi(sfirst);
+      pair<string,string>value;
+      ss>>value.first;
+      ss>>value.second;
+      p.insert_or_assign(ni,value);
+    }
+    getline(std::cin,linea);
+    ss=stringstream(linea);
+    ss>>sfirst;
   }
-  
+  cout<<"---\n";
+  return true;  
 }
 
 
