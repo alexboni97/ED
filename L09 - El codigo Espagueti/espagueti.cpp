@@ -66,34 +66,37 @@ using memoria=map<string,int>;
 
 // Indica el coste, en el caso peor, de la función `ejecutar`, en función del tamaño
 // del programa `p` y de `num_pasos`
-pair<memoria, bool> ejecutar(const programa &p, int max_pasos) {
+pair<memoria, bool> ejecutar(const programa &p, int max_pasos){
   memoria m;
-  bool running=true;
-  auto it=p.begin();
-  int ni=0;
-  
-  while (ni < max_pasos && it!=p.end()&& running){
-    pair<string,string>pvalue=it->second;
-    if(pvalue.first=="INCR"){
-      auto itm=m.find(pvalue.second);
-      if(itm!=m.end()){
-        m.insert_or_assign(itm->first,itm->second++);
-      }else{
-        m.insert_or_assign(pvalue.second,0);
+  bool running = true;
+  auto it = p.begin();
+  int ni = 0;
+
+  while (ni < max_pasos && it != p.end() && running){
+    pair<string, string> pvalue = it->second;
+    if (pvalue.first == "INCR"){
+      auto itm = m.find(pvalue.second);
+      if (itm != m.end()){
+        m.insert_or_assign(itm->first, ++(itm->second));
+      }
+      else{
+        m.insert_or_assign(pvalue.second, 1);
       }
       it++;
-    }else {
-      it=p.find(stoi(pvalue.second));
-      if(it==p.end())running=false;
+    }
+    else{
+      it = p.find(stoi(pvalue.second));
+      if (it == p.end())
+        running = false;
     }
     ni++;
   }
-  return {m,running};
+  return {m, running};
 }
 
 void mostrarMemoria(const memoria &m){
-  for(auto it =m.begin();it!=m.end();it++){
-    cout<<it->first<<" = "<<it->second<<endl;
+  for (auto it = m.begin(); it != m.end(); it++){
+    cout << it->first << " = " << it->second << endl;
   }
 }
 
@@ -102,39 +105,40 @@ void mostrarMemoria(const memoria &m){
 // en su lugar, se ha encontrado la marca de fin de fichero (EOF).
 bool tratar_caso() {
   programa p;
-  string linea,sfirst;
+  string linea, sfirst;
 
-  getline(std::cin,linea);
-  if (linea==""){
+  getline(std::cin, linea);
+  if (linea == ""){
     return false;
   }
   stringstream ss(linea);
-  ss>>sfirst;
-  while(sfirst!="BYE"){
-    if(sfirst=="RUN"){
+  ss >> sfirst;
+  while (sfirst != "BYE"){
+    if (sfirst == "RUN"){
       int np;
-      ss>>np;
-      pair<memoria,bool>solRun=ejecutar(p,np);
-      if(solRun.second){
+      ss >> np;
+      pair<memoria, bool> solRun = ejecutar(p, np);
+      if (solRun.second){
         mostrarMemoria(solRun.first);
-        cout<<"OK\n";
-      }else
-      cout<<"ERROR\n";
-    }else{
-      int ni=stoi(sfirst);
-      pair<string,string>value;
-      ss>>value.first;
-      ss>>value.second;
-      p.insert_or_assign(ni,value);
+        cout << "OK\n";
+      }
+      else
+        cout << "ERROR\n";
     }
-    getline(std::cin,linea);
-    ss=stringstream(linea);
-    ss>>sfirst;
+    else{
+      int ni = stoi(sfirst);
+      pair<string, string> value;
+      ss >> value.first;
+      ss >> value.second;
+      p.insert_or_assign(ni, value);
+    }
+    getline(std::cin, linea);
+    ss = stringstream(linea);
+    ss >> sfirst;
   }
-  cout<<"---\n";
-  return true;  
+  cout << "---\n";
+  return true;
 }
-
 
 int main() {
   // Si estás ejecutando el programa en tu ordenador, las siguientes líneas
