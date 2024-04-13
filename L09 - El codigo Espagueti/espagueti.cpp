@@ -66,18 +66,23 @@ using memoria=map<string,int>;
 
 // Indica el coste, en el caso peor, de la función `ejecutar`, en función del tamaño
 // del programa `p` y de `num_pasos`
+/*
+En el caso peor, recorremos todo el map p hasta llegar a max_pasos, por lo tanto el coste sería
+O(m*log n) siendo m el numero maximo de pasos (max_pasos) pasado como parametro de entrada y
+log n, siendo n el numero de entradas que se encuentran en el map p pasado como parametro de entrada 
+*/
 pair<memoria, bool> ejecutar(const programa &p, int max_pasos){
   memoria m;
   bool running = true;
   auto it = p.begin();
   int ni = 0;
 
-  while (ni < max_pasos && it != p.end() && running){
+  while (ni < max_pasos && it != p.end() && running) { // O(max_pasos)
     pair<string, string> pvalue = it->second;
     if (pvalue.first == "INCR"){
-      auto itm = m.find(pvalue.second);
-      if (itm != m.end()){
-        m.insert_or_assign(itm->first, ++(itm->second));
+      auto itm = m.find(pvalue.second); // O(log n) 
+      if (itm != m.end()) { // O(1)
+        m.insert_or_assign(itm->first, ++(itm->second)); // O(log n)
       }
       else{
         m.insert_or_assign(pvalue.second, 1);
@@ -85,8 +90,8 @@ pair<memoria, bool> ejecutar(const programa &p, int max_pasos){
       it++;
     }
     else{
-      it = p.find(stoi(pvalue.second));
-      if (it == p.end())
+      it = p.find(stoi(pvalue.second)); // O(log n) 
+      if (it == p.end())  // O(1)
         running = false;
     }
     ni++;
