@@ -36,10 +36,6 @@ using namespace std;
 
 
 // Define un tipo para representar los programas
-// struct{
-//   map<int,pair<string,int>> m;
-//   int numI;
-// }pr;
 // using programa = ...
 using programa=map<int,pair<string,string>>;
 // Define un tipo para almacenar el valor de cada variable del programa
@@ -69,7 +65,8 @@ using memoria=map<string,int>;
 /*
 En el caso peor, recorremos todo el map p hasta llegar a max_pasos, por lo tanto el coste sería
 O(m*log n) siendo m el numero maximo de pasos (max_pasos) pasado como parametro de entrada y
-log n, siendo n el numero de entradas que se encuentran en el map p pasado como parametro de entrada 
+log n, siendo n el numero de entradas mayor entre las que se encuentran en el map usado en programa p y las entradas del map usado en memoria m.
+Este coste log n sobre el tipo map producen las operaciones find() e insert_or_assign() 
 */
 pair<memoria, bool> ejecutar(const programa &p, int max_pasos){
   memoria m;
@@ -85,7 +82,7 @@ pair<memoria, bool> ejecutar(const programa &p, int max_pasos){
         m.insert_or_assign(itm->first, ++(itm->second)); // O(log n)
       }
       else{
-        m.insert_or_assign(pvalue.second, 1);
+        m.insert_or_assign(pvalue.second, 1);// O(log n)
       }
       it++;
     }
