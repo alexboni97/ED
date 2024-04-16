@@ -20,22 +20,25 @@
 #include <cassert>
 #include <unordered_set>
 #include <unordered_map>
+#include <map>
 #include <set>
 
 // Añade los include que necesites
 
 using namespace std;
-pair<bool,set<string>>comprobarSiHayGanadores(unordered_map<string, unordered_set<int>>jugadores, int num){
-    pair<bool,set<string>> ganadores;
-    for(pair<string,unordered_set<int>>j:jugadores){
-        auto itj=j.second.find(num);
-        j.second.erase(itj);
-        if(j.second.empty()){
-            ganadores.first=true;
-            ganadores.second.insert(j.first);
+bool comprobarSiHayGanadores(unordered_map<string, unordered_set<int>>&jugadores, int num){
+  bool hayGanador=false;
+    for(auto it=jugadores.begin();it!=jugadores.end();it++){
+        auto itj=(*it).second.find(num);
+        if(itj!=(*it).second.end()){
+          (*it).second.erase(itj);
+          if((*it).second.empty()){
+            hayGanador=true;
+          }
         }
+
     }
-    return ganadores;
+    return hayGanador;
 }
 bool tratar_caso() {
   // Escribe aquí el código para tratar un caso de prueba
@@ -55,21 +58,17 @@ bool tratar_caso() {
             carton.insert(aux);
             cin>>aux;
         }
-        jugadores.insert_or_assign(nombre,carton);
+        jugadores.insert({nombre,carton});
     }
     
     int num;
-    pair<bool,set<string>>ganadores;
-    while(!esBingo){
+    cin>>num;
+    while(!comprobarSiHayGanadores(jugadores,num)){
         cin>>num;
-        ganadores=comprobarSiHayGanadores(jugadores,num);
-        if (ganadores.first) {
-            esBingo=true;
-        }
     }
-    set<string> nombres=ganadores.second;
-    for(string n:nombres){
-        cout << n <<" ";
+    for(auto it=jugadores.begin();it!=jugadores.end();it++){
+      if((*it).second.empty())
+        cout << (*it).first <<" ";
     }
     cout<<endl;
     return true;
