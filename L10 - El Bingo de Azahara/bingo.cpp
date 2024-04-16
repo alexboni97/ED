@@ -26,8 +26,10 @@
 // Añade los include que necesites
 
 using namespace std;
-bool comprobarSiHayGanadores(map<string, unordered_set<int>>&jugadores, int num){
+pair<bool,set<string>> comprobarSiHayGanadores(unordered_map<string, unordered_set<int>>&jugadores,unordered_set<int>&numeros, const int& num){
   bool hayGanador=false;
+  set<string>ganadores;
+  if(numeros.count(num)==1){
     for(auto it=jugadores.begin();it!=jugadores.end();){
       if(hayGanador&&(*it).second.size()>1)
         it=jugadores.erase(it);
@@ -37,41 +39,52 @@ bool comprobarSiHayGanadores(map<string, unordered_set<int>>&jugadores, int num)
           (*it).second.erase(itj);
           if((*it).second.empty()){
             hayGanador=true;
+            ganadores.insert((*it).first);
           }
         }
         ++it;
       }
     }
-    return hayGanador;
+
+  }
+    return {hayGanador,ganadores};
 }
 bool tratar_caso() {
   // Escribe aquí el código para tratar un caso de prueba
     int n;
     cin>>n;
-    if(n==0||!cin) return false;
+    if(n==0) return false;
 
-    bool esBingo=false;
+
     string nombre;
     int aux;
-    map<string, unordered_set<int>> jugadores;
+    unordered_map<string, unordered_set<int>> jugadores;
+    unordered_set<int>numeros;
     for (int i = 0; i < n; i++) {
         cin>> nombre;
         cin>>aux;
         unordered_set<int> carton;
         while (aux != 0) {
             carton.insert(aux);
+            numeros.insert(aux);
             cin>>aux;
         }
         jugadores.insert({nombre,carton});
     }
     
     int num;
+    pair<bool,set<string>>ganadores;
+    bool esBingo=false;
     cin>>num;
-    while(!comprobarSiHayGanadores(jugadores,num)){
+    while(!esBingo){
+      ganadores=comprobarSiHayGanadores(jugadores,numeros,num);
+      if(ganadores.first){
+        esBingo=true;
+      }else
         cin>>num;
     }
-    for(auto it=jugadores.begin();it!=jugadores.end();it++){
-        cout << (*it).first <<" ";
+    for(string g:ganadores.second){
+        cout << g <<" ";
     }
     cout<<endl;
     return true;
