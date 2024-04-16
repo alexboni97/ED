@@ -26,9 +26,12 @@
 // Añade los include que necesites
 
 using namespace std;
-bool comprobarSiHayGanadores(unordered_map<string, unordered_set<int>>&jugadores, int num){
+bool comprobarSiHayGanadores(map<string, unordered_set<int>>&jugadores, int num){
   bool hayGanador=false;
-    for(auto it=jugadores.begin();it!=jugadores.end();it++){
+    for(auto it=jugadores.begin();it!=jugadores.end();){
+      if(hayGanador&&(*it).second.size()>1)
+        it=jugadores.erase(it);
+      else{
         auto itj=(*it).second.find(num);
         if(itj!=(*it).second.end()){
           (*it).second.erase(itj);
@@ -36,7 +39,8 @@ bool comprobarSiHayGanadores(unordered_map<string, unordered_set<int>>&jugadores
             hayGanador=true;
           }
         }
-
+        ++it;
+      }
     }
     return hayGanador;
 }
@@ -44,12 +48,12 @@ bool tratar_caso() {
   // Escribe aquí el código para tratar un caso de prueba
     int n;
     cin>>n;
-    if(n==0) return false;
+    if(n==0||!cin) return false;
 
     bool esBingo=false;
     string nombre;
     int aux;
-    unordered_map<string, unordered_set<int>> jugadores;
+    map<string, unordered_set<int>> jugadores;
     for (int i = 0; i < n; i++) {
         cin>> nombre;
         cin>>aux;
@@ -67,7 +71,6 @@ bool tratar_caso() {
         cin>>num;
     }
     for(auto it=jugadores.begin();it!=jugadores.end();it++){
-      if((*it).second.empty())
         cout << (*it).first <<" ";
     }
     cout<<endl;
