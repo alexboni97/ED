@@ -77,6 +77,16 @@ public:
 // Tipo de datos enumerado para representar direcciones
 enum class Direccion { Norte, Sur, Este, Oeste };
 
+Direccion contrariaDir(Direccion dir){
+  if(dir==Direccion::Este)
+  return Direccion::Oeste;
+  if(dir==Direccion::Oeste)
+  return Direccion::Este;
+  if(dir==Direccion::Norte)
+  return Direccion::Sur; 
+  if(dir==Direccion::Sur)
+  return Direccion::Norte;
+}
 // Sobrecargamos el operador >> para poder leer direcciones más fácilmente.
 // Bastará con hacer `cin >> d` donde `d` es una variable de tipo Direccion.
 istream &operator>>(istream &in, Direccion &d) {
@@ -153,7 +163,9 @@ public:
       throw domain_error("ERROR: Serpiente no existe");
     return (*it).second.puntuacion;
   }
- 
+  
+
+
   bool avanzar(const string &nombre, const Direccion &dir) {
     bool pudo=true;
     auto it =serpientes.find(nombre);
@@ -162,7 +174,31 @@ public:
     Posicion pos=(*it).second.cola.front();
     pos=pos+dir;
     auto ito=objetos.find(pos);
-    if(ito!=objetos.end())
+    if(ito==objetos.end()){
+      if((*it).second.crecimiento==0)
+        (*it).second.cola.pop();
+      else (*it).second.crecimiento--;
+      (*it).second.cola.push(pos);
+    }else{
+      if((*ito).second==Elemento::Manzana){
+        auto itm=manzanas.find((*ito).first);
+        (*it).second.puntuacion+=(*itm).second.puntuacion;
+        (*it).second.crecimiento+=(*itm).second.crecimiento;
+        objetos.insert_or_assign((*ito).first,Elemento::Serpiente);
+        manzanas.erase(itm);
+        (*it).second.cola.pop();
+        (*it).second.cola.push(pos);
+      }
+      else {
+        if((*it).second.cola.back()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir)){
+          (*it).second.cola.pop();
+          (*it).second.cola.push(pos);
+        }else{
+          throw domain_error((*it).first+"muere");
+        }
+      }
+    }
+      
 
     return pudo;
   }
@@ -177,13 +213,16 @@ public:
 private:
   // Añade los atributos y funciones privadas que veas necesarias.
   //objetos en el tablero
-  unordered_map <Posicion,Elemento>objetos;
+  unordered_map <Posicion,Elemento,hash<Posicion>>objetos;
 
   //serpientes en el tablero
   struct InfoSerpiente{
     int puntuacion;
     int tam;
     queue<Posicion>cola;
+    unordered_set<Posicion,hash<Posicion>>posicionesCola;
+    int crecimiento;
+    Direccion finalDir;
   };
   unordered_map <string,InfoSerpiente>serpientes;
  
@@ -192,7 +231,7 @@ private:
     int crecimiento=0;
     int puntuacion=0;
   };
-  unordered_map<Posicion,InfoManzana>manzanas;
+  unordered_map<Posicion,InfoManzana,hash<Posicion>>manzanas;
 
 };
 
