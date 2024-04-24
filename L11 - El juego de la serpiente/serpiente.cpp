@@ -39,6 +39,22 @@
 
 using namespace std;
 
+
+
+
+// Tipo de datos enumerado para representar direcciones
+enum class Direccion { Norte, Sur, Este, Oeste };
+
+Direccion contrariaDir(Direccion dir){
+  if(dir==Direccion::Este)
+  return Direccion::Oeste;
+  else if(dir==Direccion::Oeste)
+  return Direccion::Este;
+  else if(dir==Direccion::Norte)
+  return Direccion::Sur; 
+  else 
+  return Direccion::Norte;
+}
 // Tipo para representar una posición en la cuadrícula mediante un par de
 // coordenadas
 struct Posicion {
@@ -62,7 +78,6 @@ struct Posicion {
     return Posicion(x,y);
   }
 };
-
 // Definimos una función hash para el tipo Posicion.
 template<>
 class std::hash<Posicion> {
@@ -72,21 +87,6 @@ public:
   }
 
 };
-
-
-// Tipo de datos enumerado para representar direcciones
-enum class Direccion { Norte, Sur, Este, Oeste };
-
-Direccion contrariaDir(Direccion dir){
-  if(dir==Direccion::Este)
-  return Direccion::Oeste;
-  if(dir==Direccion::Oeste)
-  return Direccion::Este;
-  if(dir==Direccion::Norte)
-  return Direccion::Sur; 
-  if(dir==Direccion::Sur)
-  return Direccion::Norte;
-}
 // Sobrecargamos el operador >> para poder leer direcciones más fácilmente.
 // Bastará con hacer `cin >> d` donde `d` es una variable de tipo Direccion.
 istream &operator>>(istream &in, Direccion &d) {
@@ -171,30 +171,48 @@ public:
     auto it =serpientes.find(nombre);
     if(it==serpientes.end())
       throw domain_error("ERROR: Serpiente no existe");
-    Posicion pos=(*it).second.cola.front();
+    Posicion pos=(*it).second.cola.back();
     pos=pos+dir;
     auto ito=objetos.find(pos);
     if(ito==objetos.end()){
-      if((*it).second.crecimiento==0)
+      if((*it).second.crecimiento==0){
+        objetos.erase((*it).second.cola.front());
         (*it).second.cola.pop();
+      }
       else (*it).second.crecimiento--;
       (*it).second.cola.push(pos);
+      (*it).second.finalDir=dir;
+      objetos.insert({pos,Elemento::Serpiente});
     }else{
       if((*ito).second==Elemento::Manzana){
         auto itm=manzanas.find((*ito).first);
+        if((*it).second.crecimiento==0){
+          objetos.erase((*it).second.cola.front());
+          (*it).second.cola.pop();
+        }
+        else (*it).second.crecimiento--;
         (*it).second.puntuacion+=(*itm).second.puntuacion;
         (*it).second.crecimiento+=(*itm).second.crecimiento;
         objetos.insert_or_assign((*ito).first,Elemento::Serpiente);
         manzanas.erase(itm);
-        (*it).second.cola.pop();
         (*it).second.cola.push(pos);
+        (*it).second.finalDir=dir;
       }
       else {
-        if((*it).second.cola.back()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir)){
+        if((*it).second.cola.front()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir)){
+          objetos.erase((*it).second.cola.front());
           (*it).second.cola.pop();
           (*it).second.cola.push(pos);
+          (*it).second.finalDir=dir;
+          
         }else{
-          throw domain_error((*it).first+"muere");
+          while (!(*it).second.cola.empty()){
+            objetos.erase((*it).second.cola.front());
+            (*it).second.cola.pop();
+          }
+          string nombre=(*it).first;
+          serpientes.erase((*it).first);
+          throw domain_error(nombre+" muere");
         }
       }
     }
@@ -253,23 +271,43 @@ bool tratar_caso() {
         if (p == "nueva_serpiente") {
             cin >> nombre >> x >> y;
             pos = Posicion(x, y);
+            try{
             juego.nueva_serpiente(nombre, pos);
+
+            }catch(exception &e){
+              cout<<e.what()<<endl;
+            }
         }
         else if (p == "nueva_manzana") {
             int crecimiento, puntuacion;
-            cin >> nombre >> x >> y >> crecimiento >> puntuacion;
+            cin >> x >> y >> crecimiento >> puntuacion;
             pos = Posicion(x, y);
+
+            try{
             juego.nueva_manzana(pos, crecimiento, puntuacion);
+
+            }catch(exception &e){
+              cout<<e.what()<<endl;
+            }
         }
         else if (p == "avanzar") {
             Direccion dir;
             cin >> nombre >> dir;
+            try{
             juego.avanzar(nombre, dir);
+
+            }catch(exception &e){
+              cout<<e.what()<<endl;
+            }
         }
         else if (p == "que_hay") {
             cin >> x >> y;
             pos = Posicion(x, y);
-            juego.que_hay(pos);
+            cout<<juego.que_hay(pos)<<endl;
+        }
+        else if (p == "puntuacion") {
+            cin >> nombre;
+            cout<<nombre<<" tiene "<<juego.puntuacion(nombre)<<" puntos"<<endl;
         }
 
         cin >> p;
