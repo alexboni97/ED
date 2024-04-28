@@ -45,7 +45,7 @@ using namespace std;
 // Tipo de datos enumerado para representar direcciones
 enum class Direccion { Norte, Sur, Este, Oeste };
 
-Direccion contrariaDir(Direccion dir){
+Direccion mismaDir(Direccion dir){
   if(dir==Direccion::Este)
   return Direccion::Oeste;
   else if(dir==Direccion::Oeste)
@@ -158,64 +158,66 @@ public:
   }
 
   int puntuacion(const string &nombre) const {
-    auto it =serpientes.find(nombre);
-    if(it==serpientes.end())
+    auto its =serpientes.find(nombre);
+    if(its==serpientes.end())
       throw domain_error("ERROR: Serpiente no existe\n");
-    return (*it).second.puntuacion;
+    return (*its).second.puntuacion;
   }
   
 
 
   bool avanzar(const string &nombre, const Direccion &dir) {
-    bool pudo=false;
-    auto it =serpientes.find(nombre);
-    if(it==serpientes.end())
+    bool pudo = false;
+    auto its = serpientes.find(nombre);
+    if (its == serpientes.end())
       throw domain_error("ERROR: Serpiente no existe\n");
-    Posicion pos=(*it).second.cola.back();
-    pos=pos+dir;
-    auto ito=objetos.find(pos);
-    if(ito==objetos.end()){
-      if((*it).second.crecimiento==0){
-        objetos.erase((*it).second.cola.front());
-        (*it).second.cola.pop();
+    Posicion pos = (*its).second.cola.back();
+    pos = pos + dir;
+    auto ito = objetos.find(pos);
+    if (ito == objetos.end()){
+      if ((*its).second.crecimiento == 0){
+        objetos.erase((*its).second.cola.front());
+        (*its).second.cola.pop();
       }
-      else (*it).second.crecimiento--;
-      (*it).second.cola.push(pos);
-      (*it).second.finalDir=dir;
-      objetos.insert({pos,Elemento::Serpiente});
-    }else{
-      if((*ito).second==Elemento::Manzana){
-        auto itm=manzanas.find((*ito).first);
-        if((*it).second.crecimiento==0){
-          objetos.erase((*it).second.cola.front());
-          (*it).second.cola.pop();
-        }
-        else (*it).second.crecimiento--;
-        (*it).second.puntuacion+=(*itm).second.puntuacion;
-        (*it).second.crecimiento+=(*itm).second.crecimiento;
-        objetos.insert_or_assign((*ito).first,Elemento::Serpiente);
+      else
+        (*its).second.crecimiento--;
+      (*its).second.cola.push(pos);
+      (*its).second.finalDir = dir;
+      objetos.insert({pos, Elemento::Serpiente});
+    }
+    else{
+      if ((*ito).second == Elemento::Manzana){
+        auto itm = manzanas.find((*ito).first);
+        if ((*its).second.crecimiento == 0){
+          objetos.erase((*its).second.cola.front());
+          (*its).second.cola.pop();
+        }else
+          (*its).second.crecimiento--;
+        (*its).second.puntuacion += (*itm).second.puntuacion;
+        (*its).second.crecimiento += (*itm).second.crecimiento;
+        objetos.insert_or_assign((*ito).first, Elemento::Serpiente);
         manzanas.erase(itm);
-        (*it).second.cola.push(pos);
-        (*it).second.finalDir=dir;
+        (*its).second.cola.push(pos);
+        (*its).second.finalDir = dir;
       }
-      else {
-        if(((*it).second.cola.size()==1&&(*ito).second!=Elemento::Serpiente)||( (*it).second.cola.front()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir))){
-          objetos.erase((*it).second.cola.front());
-          (*it).second.cola.pop();
-          (*it).second.cola.push(pos);
-          (*it).second.finalDir=dir;
-          
-        }else{
-          while (!(*it).second.cola.empty()){
-            objetos.erase((*it).second.cola.front());
-            (*it).second.cola.pop();
+      else{
+        if((*its).second.crecimiento == 0&&(*its).second.cola.front() == (*ito).first){//||(*its).second.cola.size() == 1||(*its).second.finalDir != mismaDir(dir))
+            objetos.erase((*its).second.cola.front());
+            (*its).second.cola.pop();
+            (*its).second.cola.push(pos);
+            (*its).second.finalDir = dir;
+        }
+        else{
+          while (!(*its).second.cola.empty())
+          {
+            objetos.erase((*its).second.cola.front());
+            (*its).second.cola.pop();
           }
-          serpientes.erase((*it).first);
+          serpientes.erase((*its).first);
           return true;
         }
       }
     }
-      
 
     return pudo;
   }
@@ -261,7 +263,7 @@ bool tratar_caso()
   cin >> p;
   if (cin.eof() || !cin)
     return false;
-  try {
+  // try {
   JuegoSerpiente juego;
     while (p != "FIN"){
       string nombre;
@@ -270,19 +272,34 @@ bool tratar_caso()
       if (p == "nueva_serpiente"){
         cin >> nombre >> x >> y;
         pos = Posicion(x, y);
-        juego.nueva_serpiente(nombre, pos);
+        try {
+          juego.nueva_serpiente(nombre, pos);
+        }
+        catch (exception &e){
+          cout << e.what();
+        }
       }
       else if (p == "nueva_manzana"){
         int crecimiento, puntuacion;
         cin >> x >> y >> crecimiento >> puntuacion;
         pos = Posicion(x, y);
-        juego.nueva_manzana(pos, crecimiento, puntuacion);
+        try {
+          juego.nueva_manzana(pos, crecimiento, puntuacion);
+        }
+        catch (exception &e){
+          cout << e.what();
+        }
       }
       else if (p == "avanzar"){
         Direccion dir;
         cin >> nombre >> dir;
-        if (juego.avanzar(nombre, dir))
-          cout << nombre << " muere" << endl;
+        try {
+          if (juego.avanzar(nombre, dir))
+            cout << nombre << " muere" << endl;
+        }
+        catch (exception &e){
+          cout << e.what();
+        }
       }
       else if (p == "que_hay"){
         cin >> x >> y;
@@ -292,20 +309,25 @@ bool tratar_caso()
       }
       else if (p == "puntuacion"){
         cin >> nombre;
-        int puntuacion = juego.puntuacion(nombre);
-        cout << nombre << " tiene " << puntuacion << " puntos" << endl;
+        try{
+          int puntuacion = juego.puntuacion(nombre);
+          cout << nombre << " tiene " << puntuacion << " puntos" << endl;
+        }
+        catch (exception &e){
+          cout << e.what();
+        }
       }
 
       cin >> p;
     }
 
-  }
-  catch (exception &e){
-    cout << e.what();
-    while (p != "FIN"){
-    cin>>p;
-    }
-  }
+  // }
+  // catch (exception &e){
+  //   cout << e.what();
+  //   while (p != "FIN"){
+  //   cin>>p;
+  //   }
+  // }
   cout << "---\n";
   return true;
 }
