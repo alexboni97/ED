@@ -134,22 +134,22 @@ public:
 
   void nueva_serpiente(const string &nombre, const Posicion &posicion) {
     if(serpientes.count(nombre)!=0)
-      throw domain_error("ERROR: Serpiente ya existente");
+      throw domain_error("ERROR: Serpiente ya existente\n");
     if( objetos.find(posicion)!=objetos.end())
-      throw domain_error("ERROR: Posicion ocupada");
+      throw domain_error("ERROR: Posicion ocupada\n");
     objetos.insert({posicion,Elemento::Serpiente});
     InfoSerpiente s;
     queue <Posicion>cola;
     cola.push(posicion);
     s.cola=cola;
-    s.tam=1;
     s.puntuacion=0;
+    s.crecimiento=0;
     serpientes.insert({nombre,s});
   }
 
   void nueva_manzana(const Posicion &posicion, int crecimiento, int puntuacion) {
     if( objetos.find(posicion)!=objetos.end())
-      throw domain_error("ERROR: Posicion ocupada");
+      throw domain_error("ERROR: Posicion ocupada\n");
     InfoManzana m;
     m.crecimiento=crecimiento;
     m.puntuacion=puntuacion;
@@ -160,17 +160,17 @@ public:
   int puntuacion(const string &nombre) const {
     auto it =serpientes.find(nombre);
     if(it==serpientes.end())
-      throw domain_error("ERROR: Serpiente no existe");
+      throw domain_error("ERROR: Serpiente no existe\n");
     return (*it).second.puntuacion;
   }
   
 
 
   bool avanzar(const string &nombre, const Direccion &dir) {
-    bool pudo=true;
+    bool pudo=false;
     auto it =serpientes.find(nombre);
     if(it==serpientes.end())
-      throw domain_error("ERROR: Serpiente no existe");
+      throw domain_error("ERROR: Serpiente no existe\n");
     Posicion pos=(*it).second.cola.back();
     pos=pos+dir;
     auto ito=objetos.find(pos);
@@ -199,7 +199,7 @@ public:
         (*it).second.finalDir=dir;
       }
       else {
-        if((*it).second.cola.front()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir)){
+        if(((*it).second.cola.size()==1&&(*ito).second!=Elemento::Serpiente)||( (*it).second.cola.front()==(*ito).first&&(*it).second.crecimiento==0&&(*it).second.finalDir!=contrariaDir(dir))){
           objetos.erase((*it).second.cola.front());
           (*it).second.cola.pop();
           (*it).second.cola.push(pos);
@@ -210,9 +210,8 @@ public:
             objetos.erase((*it).second.cola.front());
             (*it).second.cola.pop();
           }
-          string nombre=(*it).first;
           serpientes.erase((*it).first);
-          throw domain_error(nombre+" muere");
+          return true;
         }
       }
     }
@@ -231,15 +230,13 @@ public:
 private:
   // Añade los atributos y funciones privadas que veas necesarias.
   //objetos en el tablero
-  unordered_map <Posicion,Elemento,hash<Posicion>>objetos;
+  unordered_map <Posicion,Elemento>objetos;
 
   //serpientes en el tablero
   struct InfoSerpiente{
     int puntuacion;
-    int tam;
-    queue<Posicion>cola;
-    unordered_set<Posicion,hash<Posicion>>posicionesCola;
     int crecimiento;
+    queue<Posicion>cola;
     Direccion finalDir;
   };
   unordered_map <string,InfoSerpiente>serpientes;
@@ -249,7 +246,7 @@ private:
     int crecimiento=0;
     int puntuacion=0;
   };
-  unordered_map<Posicion,InfoManzana,hash<Posicion>>manzanas;
+  unordered_map<Posicion,InfoManzana>manzanas;
 
 };
 
@@ -257,65 +254,61 @@ private:
 // Función para tratar un caso de prueba. Devuelve false si, en lugar de un
 // caso de prueba, se ha encontrado con la marca de fin de entrada
 // (EOF). Devuelve true en caso contrario.
-bool tratar_caso() {
+bool tratar_caso()
+{
   // Implementar
-    string p;
-    cin >> p;
-    if (!cin)
-        return false;
-    JuegoSerpiente juego;
-    while (p != "FIN") {
-        string nombre;
-        Posicion pos;
-        int x, y;
-        if (p == "nueva_serpiente") {
-            cin >> nombre >> x >> y;
-            pos = Posicion(x, y);
-            try{
-            juego.nueva_serpiente(nombre, pos);
+  string p;
+  cin >> p;
+  if (cin.eof() || !cin)
+    return false;
+  try {
+  JuegoSerpiente juego;
+    while (p != "FIN"){
+      string nombre;
+      Posicion pos;
+      int x, y;
+      if (p == "nueva_serpiente"){
+        cin >> nombre >> x >> y;
+        pos = Posicion(x, y);
+        juego.nueva_serpiente(nombre, pos);
+      }
+      else if (p == "nueva_manzana"){
+        int crecimiento, puntuacion;
+        cin >> x >> y >> crecimiento >> puntuacion;
+        pos = Posicion(x, y);
+        juego.nueva_manzana(pos, crecimiento, puntuacion);
+      }
+      else if (p == "avanzar"){
+        Direccion dir;
+        cin >> nombre >> dir;
+        if (juego.avanzar(nombre, dir))
+          cout << nombre << " muere" << endl;
+      }
+      else if (p == "que_hay"){
+        cin >> x >> y;
+        pos = Posicion(x, y);
+        cout << juego.que_hay(pos);
+        cout << endl;
+      }
+      else if (p == "puntuacion"){
+        cin >> nombre;
+        int puntuacion = juego.puntuacion(nombre);
+        cout << nombre << " tiene " << puntuacion << " puntos" << endl;
+      }
 
-            }catch(exception &e){
-              cout<<e.what()<<endl;
-            }
-        }
-        else if (p == "nueva_manzana") {
-            int crecimiento, puntuacion;
-            cin >> x >> y >> crecimiento >> puntuacion;
-            pos = Posicion(x, y);
-
-            try{
-            juego.nueva_manzana(pos, crecimiento, puntuacion);
-
-            }catch(exception &e){
-              cout<<e.what()<<endl;
-            }
-        }
-        else if (p == "avanzar") {
-            Direccion dir;
-            cin >> nombre >> dir;
-            try{
-            juego.avanzar(nombre, dir);
-
-            }catch(exception &e){
-              cout<<e.what()<<endl;
-            }
-        }
-        else if (p == "que_hay") {
-            cin >> x >> y;
-            pos = Posicion(x, y);
-            cout<<juego.que_hay(pos)<<endl;
-        }
-        else if (p == "puntuacion") {
-            cin >> nombre;
-            cout<<nombre<<" tiene "<<juego.puntuacion(nombre)<<" puntos"<<endl;
-        }
-
-        cin >> p;
+      cin >> p;
     }
-        cout << "---\n";
-    return true;
-}
 
+  }
+  catch (exception &e){
+    cout << e.what();
+    while (p != "FIN"){
+    cin>>p;
+    }
+  }
+  cout << "---\n";
+  return true;
+}
 
 //@ </answer>
 //--------------------------------------------------------------------------
