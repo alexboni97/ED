@@ -22,8 +22,8 @@
 /*  
   Indica el nombre y apellidos de los componentes del grupo
   ---------------------------------------------------------
-  Componente 1:
-  Componente 2:
+  Componente 1: ALEX GUILLERMO BONILLA TACO
+  Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
 */
 //@ </answer>
 
@@ -131,46 +131,49 @@ public:
   JuegoSerpiente() {
 
   }
-
+  //COSTE O(1) puesto que todas las operaciones que tiene dentro nueva_serpiente() son de coste O(1) cte por las estructuras de datos usadas
   void nueva_serpiente(const string &nombre, const Posicion &posicion) {
-    if(serpientes.count(nombre)!=0)
+    if(serpientes.count(nombre)!=0)//O(1)
       throw domain_error("ERROR: Serpiente ya existente\n");
-    if( objetos.find(posicion)!=objetos.end())
+    if( objetos.find(posicion)!=objetos.end())//O(1)
       throw domain_error("ERROR: Posicion ocupada\n");
-    objetos.insert({posicion,Elemento::Serpiente});
+    objetos.insert({posicion,Elemento::Serpiente});//O(1)
     InfoSerpiente s;
     queue <Posicion>cola;
-    cola.push(posicion);
+    cola.push(posicion);//O(1)
     s.cola=cola;
     s.puntuacion=0;
     s.crecimiento=0;
-    serpientes.insert({nombre,s});
+    serpientes.insert({nombre,s});//O(1)
   }
 
+  //COSTE O(1) puesto que todas las operaciones que tiene dentro nueva_manzana() son de coste O(1) cte por las estructuras de datos usadas
   void nueva_manzana(const Posicion &posicion, int crecimiento, int puntuacion) {
-    if( objetos.find(posicion)!=objetos.end())
+    if( objetos.find(posicion)!=objetos.end())//O(1)
       throw domain_error("ERROR: Posicion ocupada\n");
     InfoManzana m;
     m.crecimiento=crecimiento;
     m.puntuacion=puntuacion;
-    objetos.insert({posicion,Elemento::Manzana});
-    manzanas.insert({posicion,m});
+    objetos.insert({posicion,Elemento::Manzana});//O(1)
+    manzanas.insert({posicion,m});//O(1)
   }
 
+  //COSTE O(1) puesto que todas las operaciones que tiene dentro puntuacion() son de coste O(1) cte por las estructuras de datos usadas
   int puntuacion(const string &nombre) const {
-    auto its =serpientes.find(nombre);
+    auto its =serpientes.find(nombre);//O(1)
     if(its==serpientes.end())
-      throw domain_error("ERROR: Serpiente no existe\n");
+      throw domain_error("ERROR: Serpiente no existente\n");
     return (*its).second.puntuacion;
   }
   
 
 
+  //COSTE O(1) puesto que todas las operaciones que tiene dentro avanzar() son de coste O(1) cte por las estructuras de datos usadas
   bool avanzar(const string &nombre, const Direccion &dir) {
     bool pudo = false;
     auto its = serpientes.find(nombre);
     if (its == serpientes.end())
-      throw domain_error("ERROR: Serpiente no existe\n");
+      throw domain_error("ERROR: Serpiente no existente\n");
     Posicion pos = (*its).second.cola.back();
     pos = pos + dir;
     auto ito = objetos.find(pos);
@@ -182,7 +185,6 @@ public:
       else
         (*its).second.crecimiento--;
       (*its).second.cola.push(pos);
-      (*its).second.finalDir = dir;
       objetos.insert({pos, Elemento::Serpiente});
     }
     else{
@@ -198,14 +200,12 @@ public:
         objetos.insert_or_assign((*ito).first, Elemento::Serpiente);
         manzanas.erase(itm);
         (*its).second.cola.push(pos);
-        (*its).second.finalDir = dir;
       }
       else{
-        if((*its).second.crecimiento == 0&&(*its).second.cola.front() == (*ito).first){//||(*its).second.cola.size() == 1||(*its).second.finalDir != mismaDir(dir))
+        if(((*its).second.crecimiento == 0&&(*its).second.cola.front() == (*ito).first)){//&&((*its).second.cola.size() == 2&&(*its).second.finalDir != mismaDir(dir))
             objetos.erase((*its).second.cola.front());
             (*its).second.cola.pop();
             (*its).second.cola.push(pos);
-            (*its).second.finalDir = dir;
         }
         else{
           while (!(*its).second.cola.empty())
@@ -222,6 +222,7 @@ public:
     return pudo;
   }
 
+  //COSTE O(1) puesto que todas las operaciones que tiene dentro avanzar() son de coste O(1) cte por las estructuras de datos usadas
   Elemento que_hay(const Posicion &p) const {
     auto it= objetos.find(p);
     if(it==objetos.end())
@@ -239,7 +240,6 @@ private:
     int puntuacion;
     int crecimiento;
     queue<Posicion>cola;
-    Direccion finalDir;
   };
   unordered_map <string,InfoSerpiente>serpientes;
  
@@ -256,50 +256,35 @@ private:
 // Función para tratar un caso de prueba. Devuelve false si, en lugar de un
 // caso de prueba, se ha encontrado con la marca de fin de entrada
 // (EOF). Devuelve true en caso contrario.
-bool tratar_caso()
-{
+bool tratar_caso(){
   // Implementar
   string p;
   cin >> p;
   if (cin.eof() || !cin)
     return false;
-  // try {
+
   JuegoSerpiente juego;
-    while (p != "FIN"){
+  while (p != "FIN")  {
+    try    {
       string nombre;
       Posicion pos;
       int x, y;
       if (p == "nueva_serpiente"){
         cin >> nombre >> x >> y;
         pos = Posicion(x, y);
-        try {
-          juego.nueva_serpiente(nombre, pos);
-        }
-        catch (exception &e){
-          cout << e.what();
-        }
+        juego.nueva_serpiente(nombre, pos);
       }
       else if (p == "nueva_manzana"){
         int crecimiento, puntuacion;
         cin >> x >> y >> crecimiento >> puntuacion;
         pos = Posicion(x, y);
-        try {
-          juego.nueva_manzana(pos, crecimiento, puntuacion);
-        }
-        catch (exception &e){
-          cout << e.what();
-        }
+        juego.nueva_manzana(pos, crecimiento, puntuacion);
       }
       else if (p == "avanzar"){
         Direccion dir;
         cin >> nombre >> dir;
-        try {
-          if (juego.avanzar(nombre, dir))
-            cout << nombre << " muere" << endl;
-        }
-        catch (exception &e){
-          cout << e.what();
-        }
+        if (juego.avanzar(nombre, dir))
+          cout << nombre << " muere" << endl;
       }
       else if (p == "que_hay"){
         cin >> x >> y;
@@ -309,25 +294,15 @@ bool tratar_caso()
       }
       else if (p == "puntuacion"){
         cin >> nombre;
-        try{
-          int puntuacion = juego.puntuacion(nombre);
-          cout << nombre << " tiene " << puntuacion << " puntos" << endl;
-        }
-        catch (exception &e){
-          cout << e.what();
-        }
+        int puntuacion = juego.puntuacion(nombre);
+        cout << nombre << " tiene " << puntuacion << " puntos" << endl;
       }
-
-      cin >> p;
     }
-
-  // }
-  // catch (exception &e){
-  //   cout << e.what();
-  //   while (p != "FIN"){
-  //   cin>>p;
-  //   }
-  // }
+    catch (exception &e){
+      cout << e.what();
+    }
+    cin >> p;
+  }
   cout << "---\n";
   return true;
 }
