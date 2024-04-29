@@ -1,13 +1,5 @@
 nueva_serpiente olivia 0 0
-nueva_manzana 1 0 8 100
+nueva_manzana 1 0 1 100
 avanzar olivia E
-avanzar olivia E
-avanzar olivia S
-avanzar olivia S
 avanzar olivia O
-avanzar olivia O
-avanzar olivia N
-avanzar olivia N
-avanzar olivia S
-avanzar olivia E
 FIN
