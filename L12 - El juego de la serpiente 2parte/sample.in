@@ -1,0 +1,16 @@
+nueva_serpiente octavia 0 0
+nueva_serpiente olegaria 1 0
+nueva_serpiente oliveria 2 0
+nueva_manzana 0 1 2 10
+nueva_manzana 1 1 2 20
+nueva_manzana 2 1 2 10
+mejores_puntuaciones 3
+avanzar olegaria N
+mejores_puntuaciones 3
+avanzar oliveria N
+avanzar octavia N
+mejores_puntuaciones 3
+avanzar oliveria O
+avanzar olegaria O
+mejores_puntuaciones 3
+FIN
