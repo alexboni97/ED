@@ -35,7 +35,7 @@
 #include <queue>
 #include <stdexcept>
 #include <unordered_map>
-#include <unordered_set>
+#include <map>
 
 using namespace std;
 
@@ -229,7 +229,7 @@ public:
       return Elemento::Nada;
     else return (*it).second;
   }
-  
+
   vector<pair<string, int>> mejores_puntuaciones(int num) const {    
 
   }
@@ -252,6 +252,8 @@ private:
     int puntuacion=0;
   };
   unordered_map<Posicion,InfoManzana>manzanas;
+
+  map<int,map<int,string>>ranking;//ranking de puntuaciones y cada puntuacion tiene un ranking de llegada
 
 };
 
@@ -299,6 +301,15 @@ bool tratar_caso(){
         cin >> nombre;
         int puntuacion = juego.puntuacion(nombre);
         cout << nombre << " tiene " << puntuacion << " puntos" << endl;
+      }
+      else if (p == "mejores_puntuaciones"){
+        int n;
+        cin >> n;
+        vector<pair<string, int>> puntuaciones = juego.mejores_puntuaciones(n);
+        int i=0;
+        while (i < n || i < puntuaciones.size()){
+          cout << puntuaciones[i].first << " (" << puntuaciones[i].second << ")\n";
+        }
       }
     }
     catch (exception &e){
