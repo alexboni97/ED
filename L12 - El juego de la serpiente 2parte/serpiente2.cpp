@@ -231,7 +231,18 @@ public:
   }
 
   vector<pair<string, int>> mejores_puntuaciones(int num) const {    
-
+    int i=0;
+    auto itr=ranking.begin();
+    vector<pair<string, int>>vpuntuaciones;
+    while (itr!=ranking.end()&&i<num){
+      map<int,string>rankEnPosI=(*itr).second;
+      for(auto itrr=rankEnPosI.begin();itrr!=rankEnPosI.end();itrr++){
+        vpuntuaciones[i]={(*itrr).second,(*itr).first};
+      }
+       i++;
+    }
+    return vpuntuaciones;
+    
   }
 private:
   // Añade los atributos y funciones privadas que veas necesarias.
@@ -305,11 +316,10 @@ bool tratar_caso(){
       else if (p == "mejores_puntuaciones"){
         int n;
         cin >> n;
-        vector<pair<string, int>> puntuaciones = juego.mejores_puntuaciones(n);
-        int i=0;
-        while (i < n || i < puntuaciones.size()){
+        vector<pair<string, int>> puntuaciones = juego.mejores_puntuaciones(n); 
+        for (int i = 0; i < puntuaciones.size(); i++)        {
           cout << puntuaciones[i].first << " (" << puntuaciones[i].second << ")\n";
-        }
+        }     
       }
     }
     catch (exception &e){
