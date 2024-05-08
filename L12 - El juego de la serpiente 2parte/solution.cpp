@@ -159,9 +159,9 @@ public:
     auto itr=ranking.begin();
     vector<pair<string, int>>vpuntuaciones;
     while (itr!=ranking.end()&&i<num){
-      map<int,string>rankEnPosI=(*itr).second;
+      list<string>rankEnPosI=(*itr).second;
       for(auto itrr=rankEnPosI.begin();itrr!=rankEnPosI.end();itrr++){
-        vpuntuaciones[i]={(*itrr).second,(*itr).first};
+        vpuntuaciones[i]={*itrr,(*itr).first};
       }
        i++;
     }
@@ -285,19 +285,29 @@ private:
       if (manzanas.count(sig)) {
         Manzana m = manzanas.at(sig);
         manzanas.erase(sig);
-        s.puntuacion += m.puntuacion;
-        auto itr =ranking.find(s.puntuacion);
-        if(itr!=ranking.end()){
-          l.push_back(nombre);
-          ranking.insert_or_assign(m.puntuacion, l);
-        }else{
-          if (m.puntuacion!=0) {
-            l=(*itr).second;
-            l.push_back(nombre);
-            ranking.insert_or_assign(s.puntuacion,l);
+        if (m.puntuacion != 0)  {
+          auto itr = ranking.find(s.puntuacion);
+          if (itr != ranking.end()){
+            auto itl = (*itr).second.begin();
+
+            while (itl != (*itr).second.end() && *itl != nombre){
+              itl++;
+            }
+            if (itl != (*itr).second.end())
+              (*itr).second.erase(itl);
           }
-          
+          s.puntuacion += m.puntuacion;
+          itr = ranking.find(s.puntuacion);
+          if (itr != ranking.end()){
+            (*itr).second.push_back(nombre);
+          }
+          else{
+              l.push_back(nombre);
+              ranking.insert_or_assign(s.puntuacion, l);
+          }
         }
+        else
+          s.puntuacion += m.puntuacion;
         s.temp_crecimiento += m.crecimiento;
       }
       return false;
