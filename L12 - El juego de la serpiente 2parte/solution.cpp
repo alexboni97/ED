@@ -24,6 +24,10 @@
   ---------------------------------------------------------
   Componente 1: ALEX GUILLERMO BONILLA TACO
   Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
+  EXAMENS ANTERIORES
+  X71 - OFICINAS DE EMPLEO
+  X69 - ACADEMIA DE CHINO
+  X67 - TRENES DE FERROVISTAN
 */
 //@ </answer>
 // Añade los #include que necesites
