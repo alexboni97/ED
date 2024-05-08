@@ -1,3 +1,4 @@
+mejores_puntuaciones 3
 nueva_serpiente octavia 0 0
 nueva_serpiente olegaria 1 0
 nueva_serpiente oliveria 2 0
@@ -9,6 +10,7 @@ avanzar olegaria N
 mejores_puntuaciones 3
 avanzar oliveria N
 avanzar octavia N
+mejores_puntuaciones 0
 mejores_puntuaciones 3
 avanzar oliveria O
 avanzar olegaria O

@@ -41,6 +41,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <iterator>
 
 using namespace std;
 
@@ -106,7 +107,6 @@ class JuegoSerpiente {
 public:
   // Coste: O(1)
   JuegoSerpiente() {
-    ranking.insert(0, {});
   }
 
   // Coste: O(1)
@@ -120,9 +120,10 @@ public:
 
     // Creamos la nueva serpiente, que únicamente contiene su cabeza
     queue<Posicion> q; q.push(posicion);
-    serpientes.insert({nombre, {posicion, 0, 0, q}});
+    ranking[0].push_back(nombre);
+    auto itposRankS=--ranking[0].end();
+    serpientes.insert({nombre, {posicion, 0, 0, q,itposRankS}});
 
-    ranking.insert({0,{nombre}});
     // La posición pasa a estar ocupada
     ocupadas.insert(posicion);
   }
@@ -160,12 +161,13 @@ public:
   }
   vector<pair<string, int>> mejores_puntuaciones(int num) const {    
     int i=0;
-    auto itr=ranking.begin();
+    auto itr=ranking.end();
     vector<pair<string, int>>vpuntuaciones;
-    while (itr!=ranking.end()&&i<num){
+    while (ranking.size()!=0&&itr!=ranking.begin()&&i<num){
+      --itr;
       list<string>rankEnPosI=(*itr).second;
       for(auto itrr=rankEnPosI.begin();itrr!=rankEnPosI.end();itrr++){
-        vpuntuaciones[i]={*itrr,(*itr).first};
+        vpuntuaciones.push_back({*itrr,(*itr).first});
       }
        i++;
     }
@@ -185,6 +187,7 @@ private:
     int puntuacion;
     int temp_crecimiento;
     queue<Posicion> cuerpo;
+    list<string>::iterator posRanking;
   };
 
   // Para cada manzana almacenamos:
@@ -269,6 +272,12 @@ private:
     if (ocupadas.count(sig)) {
       // Si está ocupada, la serpiente muere. Hay que retirar
       // su cuerpo del tablero
+      auto itR = ranking.find(s.puntuacion);
+      auto itdelete=itR->second.erase(s.posRanking);
+      // while(itdelete!=itR->second.end()){
+      //   buscar_serpiente(*itdelete).posRanking=itdelete;
+      //   itdelete++;
+      // }
       while (!s.cuerpo.empty()) {
          ocupadas.erase(s.cuerpo.front());
          s.cuerpo.pop();
@@ -285,30 +294,16 @@ private:
 
       // Si hay una manzana en la nueva posición, la quitamos del tablero y
       // cambiamos los atributos de la serpiente.
-      list<string> l;
+      
       if (manzanas.count(sig)) {
         Manzana m = manzanas.at(sig);
         manzanas.erase(sig);
         if (m.puntuacion != 0)  {
           auto itr = ranking.find(s.puntuacion);
-          if (itr != ranking.end()){
-            auto itl = (*itr).second.begin();
-
-            while (itl != (*itr).second.end() && *itl != nombre){
-              itl++;
-            }
-            if (itl != (*itr).second.end())
-              (*itr).second.erase(itl);
-          }
+          itr->second.erase(s.posRanking);
           s.puntuacion += m.puntuacion;
-          itr = ranking.find(s.puntuacion);
-          if (itr != ranking.end()){
-            (*itr).second.push_back(nombre);
-          }
-          else{
-              l.push_back(nombre);
-              ranking.insert_or_assign(s.puntuacion, l);
-          }
+          ranking[s.puntuacion].push_back(nombre);
+          s.posRanking=--ranking[s.puntuacion].end();
         }
         else
           s.puntuacion += m.puntuacion;
@@ -364,8 +359,9 @@ bool tratar_caso() {
         int n;
         cin >> n;
         vector<pair<string, int>> puntuaciones = s.mejores_puntuaciones(n); 
-        for (int i = 0; i < puntuaciones.size(); i++)        {
-          cout << puntuaciones[i].first << " (" << puntuaciones[i].second << ")\n";
+        cout<<"Las "<<n<<" mejores puntuaciones:\n";
+        for (auto i = 0; i < puntuaciones.size(); i++)        {
+          cout << "  "<<puntuaciones[i].first << " (" << puntuaciones[i].second << ")\n";
         }     
       }
     } catch (exception &e) {
