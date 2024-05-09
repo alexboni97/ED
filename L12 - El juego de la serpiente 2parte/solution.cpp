@@ -221,8 +221,8 @@ public:
         if (num == i)
           break;
         vpuntuaciones.push_back({j, k});
-      }
       i++;
+      }
     }
     // while (ranking.size()!=0&&itr!=ranking.begin()&&i<num){
     //   --itr;
