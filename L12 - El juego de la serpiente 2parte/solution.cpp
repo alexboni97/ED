@@ -24,12 +24,6 @@
   Componente 1: ALEX GUILLERMO BONILLA TACO
   Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
   EXAMENS ANTERIORES de mapas
-  X71 - OFICINAS DE EMPLEO
-  X69 - ACADEMIA DE CHINO
-  X67 - TRENES DE FERROVISTAN
-  EXAMENS ANTERIORES de arboles binarios
-  X38 - AREA MAS GRANDE
-  X42 . ARBOLES DENSOS
 */
 //@ </answer>
 // Añade los #include que necesites
@@ -208,6 +202,12 @@ public:
       return Elemento::Nada;
     }
   }
+
+  // Coste 0(n) en el caso peor siendo n el numero de puntuaciones que metemos en el vector vpuntuaciones,
+  //  siendo el menor entre num y el total de serpientes que hay en el juego
+  // Todas las operaciones en las que se opera sobre  map<int, list<string>, greater<int>> ranking es de tiempo constante, 
+  // porque guardamos cada posicion de la lista asociada a cada clave en un iterador de acceso constante que tiene la estructura de serpiente
+  
   vector<pair<string, int>> mejores_puntuaciones(int num) const
   {
     int i = 0;
@@ -224,14 +224,7 @@ public:
       i++;
       }
     }
-    // while (ranking.size()!=0&&itr!=ranking.begin()&&i<num){
-    //   --itr;
-    //   list<string>rankEnPosI=(*itr).second;
-    //   for(auto itrr=rankEnPosI.begin();itrr!=rankEnPosI.end();itrr++){
-    //     vpuntuaciones.push_back({*itrr,(*itr).first});
-    //   }
-    //    i++;
-    // }
+
     return vpuntuaciones;
   }
 
@@ -241,6 +234,7 @@ private:
   //  - Su puntuación
   //  - El temporizador de crecimiento
   //  - Una cola que contiene todas las casillas que ocupa el cuerpo de la serpiente
+  //  - iterador a la posicion en la que se encuentra dentro del ranking
   struct Serpiente
   {
     Posicion cabeza;
@@ -266,7 +260,7 @@ private:
   // Conjunto que indica las posiciones que están ocupadas por
   // serpientes
   unordered_set<Posicion> ocupadas;
-  // ranking de puntuaciones y cada puntuacion tiene un ranking de llegad
+  // ranking de puntuaciones y cada puntuacion tiene un ranking de llegada con los nombres de las serpientes
   map<int, list<string>, greater<int>> ranking;
 
   // Dada una dirección como punto cardinal (N, S, E, O), devuelve un vector
@@ -351,6 +345,8 @@ private:
       // Si está ocupada, la serpiente muere. Hay que retirar
       // su cuerpo del tablero
       ranking[s.puntuacion].erase(s.posRanking);
+      if(ranking[s.puntuacion].empty())
+        ranking.erase(s.puntuacion);
       // while(itdelete!=itR->second.end()){
       //   buscar_serpiente(*itdelete).posRanking=itdelete;
       //   itdelete++;
@@ -455,8 +451,9 @@ bool tratar_caso()
         int n;
         cin >> n;
         vector<pair<string, int>> puntuaciones = s.mejores_puntuaciones(n);
-        cout << "Las " << n << " mejores puntuaciones:\n";
-        for (int i = 0; i < puntuaciones.size(); i++)
+        int num=puntuaciones.size();
+        cout << "Las " << num << " mejores puntuaciones:\n";
+        for (int i = 0; i < num; i++)
         {
           cout << "  " << puntuaciones[i].first << " (" << puntuaciones[i].second << ")\n";
         }
