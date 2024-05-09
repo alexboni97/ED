@@ -23,10 +23,13 @@
   ---------------------------------------------------------
   Componente 1: ALEX GUILLERMO BONILLA TACO
   Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
-  EXAMENS ANTERIORES
+  EXAMENS ANTERIORES de mapas
   X71 - OFICINAS DE EMPLEO
   X69 - ACADEMIA DE CHINO
   X67 - TRENES DE FERROVISTAN
+  EXAMENS ANTERIORES de arboles binarios
+  X38 - AREA MAS GRANDE
+  X42 . ARBOLES DENSOS
 */
 //@ </answer>
 // Añade los #include que necesites
@@ -347,8 +350,7 @@ private:
     {
       // Si está ocupada, la serpiente muere. Hay que retirar
       // su cuerpo del tablero
-      auto itR = ranking.find(s.puntuacion);
-      auto itdelete = itR->second.erase(s.posRanking);
+      ranking[s.puntuacion].erase(s.posRanking);
       // while(itdelete!=itR->second.end()){
       //   buscar_serpiente(*itdelete).posRanking=itdelete;
       //   itdelete++;
@@ -379,8 +381,7 @@ private:
         manzanas.erase(sig);
         if (m.puntuacion != 0)
         {
-          auto itr = ranking.find(s.puntuacion);
-          itr->second.erase(s.posRanking);
+          ranking[s.puntuacion].erase(s.posRanking);
           s.puntuacion += m.puntuacion;
           ranking[s.puntuacion].push_back(nombre);
           s.posRanking = --ranking[s.puntuacion].end();
