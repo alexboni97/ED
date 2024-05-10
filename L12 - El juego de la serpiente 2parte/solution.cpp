@@ -23,7 +23,15 @@
   ---------------------------------------------------------
   Componente 1: ALEX GUILLERMO BONILLA TACO
   Componente 2: BRYAN EDUARDO CORDOVA ASCURRA
-  EXAMENS ANTERIORES de mapas
+  EXAMENS ANTERIORES de LISTAS
+  X09 - INVERTIR
+  X12 - INTERSECCION
+  X15 - SUMAR A UN ELEMENTO
+  X16 - PARTICION
+  X17 - ENTRAMAR
+  X18 - DESENTRAMAR
+  X24 - LINK Y EL VUELO
+  L05 - RECONTRUIR LISTA
 */
 //@ </answer>
 // Añade los #include que necesites
@@ -213,10 +221,10 @@ public:
     int i = 0;
     auto itr = ranking.end();
     vector<pair<string, int>> vpuntuaciones;
-    for (auto [k, v] : ranking)
+    for ( const auto& [k, v] : ranking)
     {
 
-      for (auto j : v)
+      for (const auto& j : v)
       {
         if (num == i)
           break;
