@@ -21,6 +21,7 @@
 #include <set>
 #include <unordered_map>
 #include <map>
+#include <iterator>
 
 // Añade los #include que necesites
 //@ </answer>
@@ -37,38 +38,73 @@ class Ferrovistan {
 public:
 
   void nueva_linea(const string &nombre) {
-
+    auto it=lineas.find(nombre);
+    if(it!=lineas.end())
+      throw domain_error("Linea existente");
+    lineas[nombre];
   }
   
   void nueva_estacion(const string &linea, const string &nombre, int posicion) {
-
+    auto it=lineas.find(linea);
+    if(it==lineas.end())
+      throw domain_error("Linea no existente");
+    auto itE=estaciones.find(nombre);
+    if(itE!=estaciones.end())
+      throw domain_error("Estacion duplicada en linea");
+    auto posiciones=it->second;
+    auto itP=posiciones.find(posicion);
+    if(itP!=posiciones.end())
+      throw domain_error("Posicion Ocupada");
+    posiciones[posicion]=nombre;
+    estaciones[nombre][linea]=posicion;
   }
   
   void eliminar_estacion(const string &estacion) {
-
+    auto it=estaciones.find(estacion);
+    if(it==estaciones.end())
+      throw domain_error("Estacion no existe");
+    auto lineas_activas=it->second;
+    for(auto linea:lineas_activas){
+      lineas[linea.first].erase(linea.second);
+    }
+    estaciones.erase(estacion);
   }
   
   vector<string> lineas_de(const string &estacion) const {
-
+    vector<string> collect ;
+    auto it=estaciones.find(estacion);
+    if(it==estaciones.end())
+      throw domain_error("Estacion no existente");
+    for(auto l:it->second){
+      collect.push_back(l.first);
+    }
+    return collect;
   }
   
   
   string proxima_estacion(const string &linea, const string &estacion) const {
-
+    auto it = lineas.find(linea);
+    if (it == lineas.end())
+      throw domain_error("Linea no existente");
+    auto itE = estaciones.find(estacion);
+    if (itE == estaciones.end())
+      throw domain_error("Estacion no existente");
+    auto itffff=itE;
+    ++itffff;
+    if(itffff==estaciones.end())
+      throw domain_error("Fin de trayecto");
+    int posicion=itE->second.find(linea)->second;
+    return (++(it->second.find(posicion)))->second;
   }
 
 private:
-  struct Lineas{
-
-  };
-  struct Estaciones{
-
-  };
-  unordered_map<Lineas,set<Estaciones>>estaciones;
-  unordered_map<Lineas,set<Estaciones>>lineas;
+  using Linea=string;
+  using Estacion=string;
+  using Distancia=int;
+  //unordered_map<Estacion,set<Linea>>estaciones;
+  unordered_map<Estacion,map<Linea,Distancia>>estaciones;
+  unordered_map<Linea,map<Distancia,Estacion>>lineas;;
   
-  map<int,string>linea;
-  map<string,int>estacion;
 };
 
 
@@ -124,7 +160,7 @@ bool tratar_caso() {
 
 int main() {
 #ifndef DOMJUDGE
-  std::ifstream in("sample3.in");
+  std::ifstream in("sample.in");
   auto cinbuf = std::cin.rdbuf(in.rdbuf());
 #endif
   

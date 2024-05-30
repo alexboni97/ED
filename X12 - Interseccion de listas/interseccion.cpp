@@ -189,10 +189,8 @@ void ListLinkedSingle::intersect(const ListLinkedSingle& other) {
         this->head->next = nullptr;
         return;
     }
-
     Node* curr = this->head->next;
     Node* prev = this->head;
-    Node* aux_prev = other.head;
     Node* aux = other.head->next;
 
     while (curr != nullptr && aux != nullptr) {
@@ -204,21 +202,15 @@ void ListLinkedSingle::intersect(const ListLinkedSingle& other) {
             curr = next;
         }
         else if (curr->value > aux->value) {
-            // Eliminar el nodo actual de `other`
-            Node* next = aux->next;
-            aux_prev->next = next;
-            delete aux;
-            aux = next;
+            aux = aux->next;
         }
         else {
             // Elementos iguales, avanzar en ambas listas
             prev = curr;
             curr = curr->next;
-            aux_prev = aux;
             aux = aux->next;
         }
     }
-
     // Eliminar los nodos restantes en `this` si quedaron elementos no intersectados
     while (curr != nullptr) {
         Node* next = curr->next;
@@ -226,16 +218,6 @@ void ListLinkedSingle::intersect(const ListLinkedSingle& other) {
         delete curr;
         curr = next;
     }
-
-    // Eliminar los nodos restantes en `other` si quedaron elementos no intersectados
-    while (aux != nullptr) {
-        Node* next = aux->next;
-        aux_prev->next = next;
-        delete aux;
-        aux = next;
-    }
-
-    
 }
 
 
